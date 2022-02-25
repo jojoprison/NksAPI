@@ -18,7 +18,7 @@ class Product(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано', null=True)
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)
-    type = models.ForeignKey('Type', on_delete=models.PROTECT, verbose_name='Тип')
+    type = models.ForeignKey('Type', on_delete=models.PROTECT, verbose_name='Тип', null=True)
 
     # поля для столов обычных
     depth = models.IntegerField(verbose_name='Глубина', null=True)

@@ -5,9 +5,11 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    # TODO заменить все на product
-    url(r'^table$', views.product_api),
-    url(r'^table/([0-9]+)$', views.product_api),
+    url(r'^products$', views.product_api),
+    url(r'^products/([0-9]+)$', views.product_api),
 
-    url(r'^table/save_file$', views.save_file)
+    url(r'^products/save_file$', views.save_file),
+
+    url(r'^types$', views.type_api),
+    url(r'^types/([0-9]+)$', views.type_api)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

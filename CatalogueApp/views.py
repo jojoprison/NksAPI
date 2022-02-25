@@ -3,8 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 
-from CatalogueApp.models import Product
-from CatalogueApp.serializers import ProductSerializer
+from CatalogueApp.models import Product, Type
+from CatalogueApp.serializers import ProductSerializer, TypeSerializer
 
 from django.core.files.storage import default_storage
 
@@ -24,12 +24,13 @@ def product_api(request, product_id=0):
         if product_serializer.is_valid():
             product_serializer.save()
 
-            return JsonResponse('Added', safe=False)
+            return JsonResponse('Product Added', safe=False)
 
-        return JsonResponse('Failed to Add', safe=False)
+        return JsonResponse('Product Failed to Add', safe=False)
 
     elif request.method == 'PUT':
         product_data = JSONParser().parse(request)
+        print('data: ', product_data)
 
         product = Product.objects.get(id=product_data['id'])
         product_serializer = ProductSerializer(product, data=product_data)
@@ -37,7 +38,7 @@ def product_api(request, product_id=0):
         if product_serializer.is_valid():
             product_serializer.save()
 
-            return JsonResponse('Updated', safe=False)
+            return JsonResponse('Product Updated', safe=False)
 
         return JsonResponse('Failed to Update', safe=False)
 
@@ -45,7 +46,46 @@ def product_api(request, product_id=0):
         product = Product.objects.get(id=product_id)
         product.delete()
 
-        return JsonResponse('Deleted', safe=False)
+        return JsonResponse('Product Deleted', safe=False)
+
+
+@csrf_exempt
+def type_api(request, type_id=0):
+    if request.method == 'GET':
+        types = Type.objects.all()
+        type_serializer = TypeSerializer(types, many=True)
+
+        return JsonResponse(type_serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        type_data = JSONParser().parse(request)
+        type_serializer = TypeSerializer(data=type_data)
+
+        if type_serializer.is_valid():
+            type_serializer.save()
+
+            return JsonResponse('Type Added', safe=False)
+
+        return JsonResponse('Type Failed to Add', safe=False)
+
+    elif request.method == 'PUT':
+        type_data = JSONParser().parse(request)
+
+        type_ = Type.objects.get(id=type_data['id'])
+        type_serializer = TypeSerializer(type_, data=type_data)
+
+        if type_serializer.is_valid():
+            type_serializer.save()
+
+            return JsonResponse('Type Updated', safe=False)
+
+        return JsonResponse('Type to Update', safe=False)
+
+    elif request.method == 'DELETE':
+        type_ = Type.objects.get(id=type_id)
+        type_.delete()
+
+        return JsonResponse('Type Deleted', safe=False)
 
 
 @csrf_exempt
