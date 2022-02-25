@@ -50,6 +50,7 @@ class Type(models.Model):
     title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
     # slug = models.SlugField(max_length=255, unique=True, db_index=True,
     #                         verbose_name='URL')
+    subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, verbose_name='Подтип', null=True)
 
     def __str__(self):
         return self.title
@@ -61,6 +62,15 @@ class Type(models.Model):
         ordering = ['id']
         verbose_name = 'Тип изделия'
         verbose_name_plural = 'Тип изделий'
+
+
+class Subtype(models.Model):
+    title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Подтип изделия'
+        verbose_name_plural = 'Подтип изделий'
 
 
 class TableManager(models.Manager):
