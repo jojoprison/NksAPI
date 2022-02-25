@@ -83,7 +83,7 @@ class Table(Product):
 
 class CabinetManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type__title='Шкаф')
+        return super().get_queryset().filter(type__title='Шкафы')
 
 
 class Cabinet(Product):
