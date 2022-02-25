@@ -63,6 +63,14 @@ class Type(models.Model):
         verbose_name = 'Тип изделия'
         verbose_name_plural = 'Тип изделий'
 
+    class Subtype(models.Model):
+        title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
+
+        class Meta:
+            ordering = ['id']
+            verbose_name = 'Подтип изделия'
+            verbose_name_plural = 'Подтип изделий'
+
 
 class TableManager(models.Manager):
     def get_queryset(self):
