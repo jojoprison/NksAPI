@@ -48,7 +48,7 @@ class Product(models.Model):
 
 class Type(models.Model):
     title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
-
+    subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, verbose_name='Подтип', null=True)
     # slug = models.SlugField(max_length=255, unique=True, db_index=True,
     #                         verbose_name='URL')
 
