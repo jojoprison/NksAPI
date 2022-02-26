@@ -48,6 +48,7 @@ class Product(models.Model):
 
 class Type(models.Model):
     title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
+    subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, verbose_name='Подтип', null=True)
     # slug = models.SlugField(max_length=255, unique=True, db_index=True,
     #                         verbose_name='URL')
     subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, verbose_name='Подтип', null=True)
@@ -62,6 +63,14 @@ class Type(models.Model):
         ordering = ['id']
         verbose_name = 'Тип изделия'
         verbose_name_plural = 'Тип изделий'
+
+    class Subtype(models.Model):
+        title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
+
+        class Meta:
+            ordering = ['id']
+            verbose_name = 'Подтип изделия'
+            verbose_name_plural = 'Подтип изделий'
 
 
 class Subtype(models.Model):
@@ -88,3 +97,32 @@ class Table(Product):
         # TODO может быть добавить ordering, надо потестить
         verbose_name = 'Стол'
         verbose_name_plural = 'Столы'
+
+
+class CabinetManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(type__title='Шкафы')
+
+
+class Cabinet(Product):
+    objects = CabinetManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Шкаф'
+        verbose_name_plural = 'Шкафы'
+
+
+class RackManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(type__title='Стеллаж')
+
+
+class Rack(Product):
+    objects = RackManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Стеллаж'
+        verbose_name_plural = 'Стеллажи'
+
