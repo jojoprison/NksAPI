@@ -20,21 +20,22 @@ class TypeSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    # type = TypeSerializer()
+    # TODO придумать как сделать type.id = read_only
+    type = TypeSerializer()
 
     class Meta:
         model = Product
-        fields = ('id', 'title')
+        fields = ('id', 'title', 'type', 'date_added', 'photo_file_name')
         # fields = ('id', 'title', 'type')
         # fields = ('id', 'title', 'width', 'height', 'depth', 'countertop_material', 'disposition',
         #           'execution_material', 'purpose', 'date_added', 'photo_file_name', 'description',
         #           'slug')
 
-    # def create(self, validated_data):
-    #     type_data = validated_data.pop('type')
-    #
-    #     product_type = Type.objects.get_or_create(title=type_data['title'])
-    #
-    #     product = Product.objects.create(type=product_type[0], **validated_data)
-    #
-    #     return product
+    def create(self, validated_data):
+        type_data = validated_data.pop('type')
+
+        product_type = Type.objects.get_or_create(title=type_data['id'])
+
+        product = Product.objects.create(type=product_type[0], **validated_data)
+
+        return product

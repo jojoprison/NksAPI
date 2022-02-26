@@ -10,7 +10,7 @@ class Product(models.Model):
     width = models.PositiveIntegerField(verbose_name='Ширина', null=True)
     height = models.PositiveIntegerField(verbose_name='Высота', null=True)
     price = models.PositiveIntegerField(verbose_name='Цена', null=True)
-    date_added = models.DateTimeField(verbose_name='Дата добавления', null=True)
+    date_added = models.DateTimeField(verbose_name='Дата добавления', null=True, auto_now_add=True)
     photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
@@ -51,7 +51,6 @@ class Type(models.Model):
     subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, verbose_name='Подтип', null=True)
     # slug = models.SlugField(max_length=255, unique=True, db_index=True,
     #                         verbose_name='URL')
-    subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, verbose_name='Подтип', null=True)
 
     def __str__(self):
         return self.title
@@ -64,17 +63,10 @@ class Type(models.Model):
         verbose_name = 'Тип изделия'
         verbose_name_plural = 'Тип изделий'
 
-    class Subtype(models.Model):
-        title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
-
-        class Meta:
-            ordering = ['id']
-            verbose_name = 'Подтип изделия'
-            verbose_name_plural = 'Подтип изделий'
-
 
 class Subtype(models.Model):
-    title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True)
+    title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True,
+                             null=True)
 
     class Meta:
         ordering = ['id']
