@@ -9,6 +9,7 @@ class Product(models.Model):
     article = models.CharField(max_length=40, verbose_name='Артикул', null=True)
     width = models.PositiveIntegerField(verbose_name='Ширина', null=True)
     height = models.PositiveIntegerField(verbose_name='Высота', null=True)
+    depth = models.IntegerField(verbose_name='Глубина', null=True)
     price = models.PositiveIntegerField(verbose_name='Цена', null=True)
     date_added = models.DateTimeField(verbose_name='Дата добавления', null=True, auto_now_add=True)
     photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
@@ -22,12 +23,41 @@ class Product(models.Model):
     type = models.ForeignKey('Type', to_field='title', on_delete=models.SET_DEFAULT, default='Любой',
                              verbose_name='Тип', db_column='type_title')
 
-    # поля для столов обычных
-    depth = models.IntegerField(verbose_name='Глубина', null=True)
-    countertop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True)
+
+    # поля для столов обычных/ для моек
+    tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True)
     execution_material = models.CharField(max_length=50, verbose_name='Материал исполнения', null=True)
     purpose = models.CharField(max_length=50, verbose_name='Назначение', null=True)
+    # ///////// ^ ^ НАЗНАЧЕНИЕ и МАТЕРИАЛ ИСПОЛНЕНИЯ(29-30) + к классу "СТЕЛАЖИ" \\\\\\\\
+    # 33 and 34 str only for "Cabinet"
+    oven_material = models.CharField(max_length=50, verbose_name='Материал рабочей камеры', null=True)
+    mains_switch = models.CharField(max_length=50, verbose_name='Автомат защиты электросети', null=True)
+    door_quantity = models.CharField(verbose_name='Количество дверец', null=True)
+    door_layout = models.CharField(verbose_name='Расположение дверец', null=True)
+    door_material = models.CharField(verbose_name='Материал дверец', null=True)
+    feature = models.CharField(max_length=50, verbose_name='Особенность', null=True)
+    # /////////// Тип "ТУМБА" (2 средних(35,36 str)) , тип "ШКАФЫ" - все(6 верхних)
     disposition = models.CharField(max_length=50, verbose_name='Расположение', null=True)
+    drawer_type = models.CharField(max_length=50, verbose_name='Тип тумбы', null=True)
+    # ///////// ^ ^ ТИП ТУМБЫ и РАСПОЛОЖЕНИЕ + к классу "ТУМБЫ" ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ \\\\\\\\\
+    technology_rack = models.BooleanField(verbose_name='Технологическая стойка', null=True)
+    electrical_outlets = models.BooleanField(verbose_name='Электрическая розетка', null=True)
+    lamp = models.CharField(max_length=50, verbose_name='Светильник', null=True)
+    # =====================  ИДУТ "ТУМБЫ" (2 верхних стр(43-44)) и "ШКАФЫ"(2 нижних(42-43)) ^ ^ ^ ^ ^ ^ ^ ^ ^
+    shelf_material = models.CharField(verbose_name='Материал полок', null=True)
+    shelf_space = models.CharField(verbose_name='Кол-во полок', null=True)
+    # ///////// ^ ^ КОЛ-ВО ПОЛОК  ^ ^ ^ ^ ^ ^ идут еще в "ШКАФЫ", "ТУМБЫ", "СТЕЛЛАЖИ"(2 строки сверху)
+    #
+    # для столов-моек(плюсом,only!):
+    sink_material = models.CharField(max_length=50, verbose_name='Материал мойки', null=True)
+    sink_location = models.CharField(max_length=50, verbose_name='Расположения мойки', null=True)
+    mortise = models.CharField(verbose_name='Врезная мойка', null=True)
+
+     # TODO если оставляем хуйню снизу(4 строки) , то добавить по ним инфу
+    # доп оборудование(ток для одной/растений)
+    # поджопники  тип подж,материал исполнения назначение/ ножки на коле
+    # доп оснащения : стойка тип стойки розетки(bool) расположение вода? газ?
+    # бутыли. канистры (2 катег) материал назначение объем ручка(bool) кран(bool)
 
     class Meta:
         ordering = ['id']
@@ -79,6 +109,7 @@ class Subtype(models.Model):
 class TableManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(type__title='Столы')
+        # TODO придумать как будут отфильтровываться Product^. Время существительных)
         # TODO когда-нибудь протестить вот так
         # return super().get_queryset().filter(cat__name='Актрисы').select_related('type')
 
@@ -120,3 +151,30 @@ class Rack(Product):
         verbose_name = 'Стеллаж'
         verbose_name_plural = 'Стеллажи'
 
+
+class ChairManager (models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(type__title='Стул')
+
+
+class Chair(Product):
+    objects = ChairManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Стул'
+        verbose_name_plural = 'Стулья'
+
+
+class DrawerManager (models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(type__title='Тумба')
+
+
+class Drawer(Product):
+    objects = DrawerManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = 'Тумба'
+        verbose_name_plural = 'Тумбы'
