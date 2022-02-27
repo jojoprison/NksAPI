@@ -30,7 +30,6 @@ def product_api(request, product_id=0):
 
     elif request.method == 'PUT':
         product_data = JSONParser().parse(request)
-        print('data: ', product_data)
 
         product = Product.objects.get(id=product_data['id'])
         product_serializer = ProductSerializer(product, data=product_data)
