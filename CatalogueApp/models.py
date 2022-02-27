@@ -25,24 +25,24 @@ class Product(models.Model):
 
 
     # поля для столов обычных/ для моек
-    tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True)
     execution_material = models.CharField(max_length=50, verbose_name='Материал исполнения', null=True)
     purpose = models.CharField(max_length=50, verbose_name='Назначение', null=True)
-    # ///////// ^ ^ НАЗНАЧЕНИЕ и МАТЕРИАЛ ИСПОЛНЕНИЯ(29-30) + к классу "СТЕЛАЖИ" \\\\\\\\
-    # 33 and 34 str only for "Cabinet"
+    # ///////// ^ ^ НАЗНАЧЕНИЕ и МАТЕРИАЛ ИСПОЛНЕНИЯ(28-29) + к классу "СТЕЛАЖИ" \\\\\\\\
+    # 32 and 33 str only for "ШКАФЫ"
     oven_material = models.CharField(max_length=50, verbose_name='Материал рабочей камеры', null=True)
-    mains_switch = models.CharField(max_length=50, verbose_name='Автомат защиты электросети', null=True)
+    tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True)
+    mains_switch = models.BooleanField(max_length=50, verbose_name='Автомат защиты электросети', null=True)
     door_quantity = models.CharField(verbose_name='Количество дверец', null=True)
     door_layout = models.CharField(verbose_name='Расположение дверец', null=True)
     door_material = models.CharField(verbose_name='Материал дверец', null=True)
     feature = models.CharField(max_length=50, verbose_name='Особенность', null=True)
-    # /////////// Тип "ТУМБА" (2 средних(35,36 str)) , тип "ШКАФЫ" - все(6 верхних)
+    # /////////// Тип "ТУМБА" (Кол-во и расположение дверец) , тип "ШКАФЫ" - все(7 верхних)
     disposition = models.CharField(max_length=50, verbose_name='Расположение', null=True)
     drawer_type = models.CharField(max_length=50, verbose_name='Тип тумбы', null=True)
     # ///////// ^ ^ ТИП ТУМБЫ и РАСПОЛОЖЕНИЕ + к классу "ТУМБЫ" ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ \\\\\\\\\
     technology_rack = models.BooleanField(verbose_name='Технологическая стойка', null=True)
     electrical_outlets = models.BooleanField(verbose_name='Электрическая розетка', null=True)
-    lamp = models.CharField(max_length=50, verbose_name='Светильник', null=True)
+    lamp = models.BooleanField(max_length=50, verbose_name='Светильник', null=True)
     # =====================  ИДУТ "ТУМБЫ" (2 верхних стр(43-44)) и "ШКАФЫ"(2 нижних(42-43)) ^ ^ ^ ^ ^ ^ ^ ^ ^
     shelf_material = models.CharField(verbose_name='Материал полок', null=True)
     shelf_space = models.CharField(verbose_name='Кол-во полок', null=True)
