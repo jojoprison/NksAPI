@@ -20,7 +20,7 @@ class Product(models.Model):
     #                         verbose_name='URL', null=True)
     # TODO swappable
     type = models.ForeignKey('Type', to_field='title', on_delete=models.SET_DEFAULT, default='Любой',
-                             verbose_name='Тип')
+                             verbose_name='Тип', db_column='type_title')
 
     # поля для столов обычных
     depth = models.IntegerField(verbose_name='Глубина', null=True)
