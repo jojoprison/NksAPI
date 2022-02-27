@@ -11,7 +11,7 @@ class Product(models.Model):
     height = models.PositiveIntegerField(verbose_name='Высота', null=True)
     depth = models.IntegerField(verbose_name='Глубина', null=True)
     price = models.PositiveIntegerField(verbose_name='Цена', null=True)
-    date_added = models.DateTimeField(verbose_name='Дата добавления', null=True, auto_now_add=True)
+    date_added = models.DateTimeField(verbose_name='Дата добавления', null=True , )
     photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
@@ -32,9 +32,9 @@ class Product(models.Model):
     oven_material = models.CharField(max_length=50, verbose_name='Материал рабочей камеры', null=True)
     tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True)
     mains_switch = models.BooleanField(max_length=50, verbose_name='Автомат защиты электросети', null=True)
-    door_quantity = models.CharField(verbose_name='Количество дверец', null=True)
-    door_layout = models.CharField(verbose_name='Расположение дверец', null=True)
-    door_material = models.CharField(verbose_name='Материал дверец', null=True)
+    door_quantity = models.CharField(max_length=50, verbose_name='Количество дверец', null=True)
+    door_layout = models.CharField(max_length=50, verbose_name='Расположение дверец', null=True)
+    door_material = models.CharField(max_length=50, verbose_name='Материал дверец', null=True)
     feature = models.CharField(max_length=50, verbose_name='Особенность', null=True)
     # /////////// Тип "ТУМБА" (Кол-во и расположение дверец) , тип "ШКАФЫ" - все(7 верхних)
     disposition = models.CharField(max_length=50, verbose_name='Расположение', null=True)
@@ -44,16 +44,16 @@ class Product(models.Model):
     electrical_outlets = models.BooleanField(verbose_name='Электрическая розетка', null=True)
     lamp = models.BooleanField(max_length=50, verbose_name='Светильник', null=True)
     # =====================  ИДУТ "ТУМБЫ" (2 верхних стр(43-44)) и "ШКАФЫ"(2 нижних(42-43)) ^ ^ ^ ^ ^ ^ ^ ^ ^
-    shelf_material = models.CharField(verbose_name='Материал полок', null=True)
-    shelf_space = models.CharField(verbose_name='Кол-во полок', null=True)
+    shelf_material = models.CharField(max_length=50, verbose_name='Материал полок', null=True)
+    shelf_space = models.CharField(max_length=50, verbose_name='Кол-во полок', null=True)
     # ///////// ^ ^ КОЛ-ВО ПОЛОК  ^ ^ ^ ^ ^ ^ идут еще в "ШКАФЫ", "ТУМБЫ", "СТЕЛЛАЖИ"(2 строки сверху)
     #
     # для столов-моек(плюсом,only!):
     sink_material = models.CharField(max_length=50, verbose_name='Материал мойки', null=True)
     sink_location = models.CharField(max_length=50, verbose_name='Расположения мойки', null=True)
-    mortise = models.CharField(verbose_name='Врезная мойка', null=True)
+    mortise = models.CharField(max_length=50, verbose_name='Врезная мойка', null=True)
 
-     # TODO если оставляем хуйню снизу(4 строки) , то добавить по ним инфу
+    # TODO если оставляем хуйню снизу(4 строки) , то добавить по ним инфу
     # доп оборудование(ток для одной/растений)
     # поджопники  тип подж,материал исполнения назначение/ ножки на коле
     # доп оснащения : стойка тип стойки розетки(bool) расположение вода? газ?
@@ -97,7 +97,7 @@ class Type(models.Model):
 
 
 class Subtype(models.Model):
-    title = models.CharField(max_length=50, db_index=True, verbose_name='Название', unique=True,
+    title = models.CharField(max_length=50, db_index=True, verbose_name='Подтип изделия', unique=True,
                              null=True)
 
     class Meta:
