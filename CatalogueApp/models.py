@@ -11,7 +11,7 @@ class Product(models.Model):
     height = models.PositiveIntegerField(verbose_name='Высота', null=True)
     depth = models.IntegerField(verbose_name='Глубина', null=True)
     price = models.PositiveIntegerField(verbose_name='Цена', null=True)
-    date_added = models.DateTimeField(verbose_name='Дата добавления', null=True , )
+    date_added = models.DateTimeField(verbose_name='Дата добавления', null=True , auto_now_add=True)
     photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
