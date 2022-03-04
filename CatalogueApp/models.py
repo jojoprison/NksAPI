@@ -11,7 +11,8 @@ class Product(models.Model):
     height = models.PositiveIntegerField(verbose_name='Высота', null=True)
     depth = models.IntegerField(verbose_name='Глубина', null=True)
     price = models.PositiveIntegerField(verbose_name='Цена', null=True)
-    date_added = models.DateTimeField(verbose_name='Дата добавления', auto_now_add=True, blank=True)
+    time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    time_update = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
@@ -20,7 +21,7 @@ class Product(models.Model):
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)
     # TODO swappable
-    type_title = models.ForeignKey('Type', to_field='title', on_delete=models.SET_DEFAULT, default='Любой',
+    type_title = models.ForeignKey('Type', to_field='title', on_delete=models.CASCADE,
                                    verbose_name='Тип', db_column='type_title')
 
     # поля для столов обычных/ для моек
@@ -29,8 +30,7 @@ class Product(models.Model):
     # ///////// ^ ^ НАЗНАЧЕНИЕ и МАТЕРИАЛ ИСПОЛНЕНИЯ(28-29) + к классу "СТЕЛАЖИ" \\\\\\\\
     # 32 and 33 str only for "ШКАФЫ"
     oven_material = models.CharField(max_length=50, verbose_name='Материал рабочей камеры', null=True)
-    countertop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True)
-    print(countertop_material)
+    tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы')
     mains_switch = models.BooleanField(max_length=50, verbose_name='Автомат защиты электросети', null=True)
     door_quantity = models.CharField(max_length=50, verbose_name='Количество дверец', null=True)
     door_layout = models.CharField(max_length=50, verbose_name='Расположение дверец', null=True)
@@ -66,7 +66,7 @@ class Product(models.Model):
         # имеет важное значение для пагинации - в консоли будет алерт об этом
 
     def __str__(self):
-        return self.title
+        return self.type_title
 
     # 1. такой подход более предпочтительный в случае, когда есть связанные посты по
     # каким-либо индексам
@@ -109,7 +109,7 @@ class Subtype(models.Model):
 
 class TableManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_title='Столы')
+        return super().get_queryset().filter(type__title='Столы')
         # TODO придумать как будут отфильтровываться Product^. Время существительных)
         # TODO когда-нибудь протестить вот так
         # return super().get_queryset().filter(cat__name='Актрисы').select_related('type')
@@ -127,7 +127,7 @@ class Table(Product):
 
 class CabinetManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_title='Шкафы')
+        return super().get_queryset().filter(type__title='Шкафы')
 
 
 class Cabinet(Product):
@@ -141,7 +141,7 @@ class Cabinet(Product):
 
 class RackManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_title='Стеллаж')
+        return super().get_queryset().filter(type__title='Стеллаж')
 
 
 class Rack(Product):
@@ -155,7 +155,7 @@ class Rack(Product):
 
 class ChairManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_title='Стул')
+        return super().get_queryset().filter(type__title='Стул')
 
 
 class Chair(Product):
@@ -169,7 +169,7 @@ class Chair(Product):
 
 class DrawerManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type_title='Тумба')
+        return super().get_queryset().filter(type__title='Тумба')
 
 
 class Drawer(Product):
@@ -179,3 +179,5 @@ class Drawer(Product):
         proxy = True
         verbose_name = 'Тумба'
         verbose_name_plural = 'Тумбы'
+
+
