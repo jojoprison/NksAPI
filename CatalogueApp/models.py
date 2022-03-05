@@ -21,8 +21,8 @@ class Product(models.Model):
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)
     # TODO swappable
-    type_title = models.ForeignKey('Type', to_field='title', on_delete=models.CASCADE,
-                                   verbose_name='Тип', db_column='type_title')
+    type = models.ForeignKey('Type', on_delete=models.SET_DEFAULT, default='1', verbose_name='Тип',
+                             related_name='products')
 
     # поля для столов обычных/ для моек
     execution_material = models.CharField(max_length=50, verbose_name='Материал исполнения', null=True)
@@ -66,7 +66,7 @@ class Product(models.Model):
         # имеет важное значение для пагинации - в консоли будет алерт об этом
 
     def __str__(self):
-        return self.type_title
+        return self.title
 
     # 1. такой подход более предпочтительный в случае, когда есть связанные посты по
     # каким-либо индексам
@@ -109,7 +109,9 @@ class Subtype(models.Model):
 
 class TableManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type__title='Столы')
+        # select_related - загружает и данные из таблицы категории (ЖАДНАЯ ЗАГРУЗКА)
+        # TODO протестить как работает type__title с двумя поджопниками (будет ли выводить вообще)
+        return super().get_queryset().select_related('type').filter(type__title='Стол')
         # TODO придумать как будут отфильтровываться Product^. Время существительных)
         # TODO когда-нибудь протестить вот так
         # return super().get_queryset().filter(cat__name='Актрисы').select_related('type')
@@ -127,7 +129,7 @@ class Table(Product):
 
 class CabinetManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type__title='Шкафы')
+        return super().get_queryset().filter(type_title='Шкаф')
 
 
 class Cabinet(Product):
@@ -141,7 +143,7 @@ class Cabinet(Product):
 
 class RackManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type__title='Стеллаж')
+        return super().get_queryset().filter(type_title='Стеллаж')
 
 
 class Rack(Product):
@@ -155,7 +157,7 @@ class Rack(Product):
 
 class ChairManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type__title='Стул')
+        return super().get_queryset().filter(type_title='Стул')
 
 
 class Chair(Product):
@@ -169,7 +171,7 @@ class Chair(Product):
 
 class DrawerManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(type__title='Тумба')
+        return super().get_queryset().filter(type_title='Тумба')
 
 
 class Drawer(Product):

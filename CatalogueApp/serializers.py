@@ -9,13 +9,11 @@ class TypeSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    type_title = serializers.SlugRelatedField(
-        queryset=Type.objects.all(),
-        slug_field='title')
+    type = serializers.PrimaryKeyRelatedField(queryset=Type.objects.all())
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'type_title')
+        fields = ('id', 'title', 'type', 'photo_file_name')
         # fields = ('id', 'title', 'width', 'height', 'depth', 'countertop_material', 'disposition',
         #           'execution_material', 'purpose', 'date_added', 'photo_file_name', 'description',
         #           'slug')

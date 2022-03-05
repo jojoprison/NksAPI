@@ -90,6 +90,6 @@ def type_api(request, type_id=0):
 @csrf_exempt
 def save_file(request):
     file = request.FILES['myFile']
-    file_name = default_storage.save(file.name, file)
+    file_name = default_storage.save('products/' + file.name, file)
 
     return JsonResponse(file_name, safe=False)
