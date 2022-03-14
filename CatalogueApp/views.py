@@ -4,7 +4,7 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 
 from CatalogueApp.models import Product, Type
-from CatalogueApp.serializers import ProductSerializer, TypeSerializer
+from CatalogueApp.serializers import ProductSerializer, TypeSerializer, FilterSerializer
 
 from django.core.files.storage import default_storage
 
@@ -46,6 +46,31 @@ def product_api(request, product_id=0):
         product.delete()
 
         return JsonResponse('Product Deleted', safe=False)
+
+
+@csrf_exempt
+def product_filter_all_api(request):
+    if request.method == 'GET':
+        temp_filter_list = list(set(Product.objects.all().values_list('photo_file_name', flat=True)))
+        temp_filter_list.sort()
+
+        return JsonResponse(temp_filter_list, safe=False)
+
+
+@csrf_exempt
+def product_filter_api(request):
+    if request.method == 'GET':
+        photo = request.GET.get('photo', None)
+
+        if photo == 'ALL':
+            prods_by_photo = Product.objects.all()
+        else:
+            prods_by_photo = Product.objects.filter(photo_file_name=photo)
+
+        print(prods_by_photo)
+        product_serializer = ProductSerializer(prods_by_photo, many=True)
+
+        return JsonResponse(product_serializer.data, safe=False)
 
 
 @csrf_exempt

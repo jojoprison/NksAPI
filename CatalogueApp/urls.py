@@ -8,6 +8,9 @@ urlpatterns = [
     url(r'^products$', views.product_api),
     url(r'^products/([0-9]+)$', views.product_api),
 
+    url(r'^products/filtersAll$', views.product_filter_all_api),
+    url(r'^products/filter$', views.product_filter_api),
+
     # TODO мб сделать маппинг просто на /save_file без привязки products
     url(r'^products/save_file$', views.save_file),
 

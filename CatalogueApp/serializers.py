@@ -13,7 +13,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'type', 'photo_file_name')
+        fields = ('id', 'title', 'type', 'photo_file_name', 'time_create', 'time_update', 'price')
+        read_only_fields = ('time_create', 'time_update', 'price')
         # fields = ('id', 'title', 'width', 'height', 'depth', 'countertop_material', 'disposition',
         #           'execution_material', 'purpose', 'date_added', 'photo_file_name', 'description',
         #           'slug')
+
+
+class FilterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('photo_file_name',)
