@@ -29,10 +29,12 @@ class FilterSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ('name', 'email', 'phone_number')
+        fields = ('name', 'email', 'phone')
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+
     class Meta:
-        model: Order
-        fields = ('__all__',)
+        model = Order
+        fields = ('client', 'price', 'products')
