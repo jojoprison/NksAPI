@@ -183,3 +183,33 @@ class Drawer(Product):
         verbose_name_plural = 'Тумбы'
 
 
+class Client(models.Model):
+
+    name = models.CharField(max_length=50, verbose_name='Имя заказчика')
+    email = models.CharField(max_length=50, verbose_name='Почтовый адрес')
+    first_activity_time = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    phone_number = models.CharField(max_length=50, verbose_name='Номер телефона')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Информация о заказчике'
+        verbose_name_plural = 'Информация о заказчике'
+
+
+class Order(models.Model):
+    customer = models.ForeignKey('Client', on_delete=models.SET_DEFAULT, default='1', verbose_name='Заказчик')
+    order_data = models.JSONField(max_length=50, verbose_name='Детали заказа')
+    # ListField
+    date_order = models.DateTimeField(auto_now_add=True, verbose_name='Время заказа')
+    price = models.CharField(max_length=50, verbose_name='Стоимость заказа')
+
+    def __str__(self):
+        return self.order_data
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Информация о заказе'
+        verbose_name_plural = 'Информация о заказе'
