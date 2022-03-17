@@ -14,6 +14,11 @@ urlpatterns = [
     # TODO мб сделать маппинг просто на /save_file без привязки products
     url(r'^products/save_file$', views.save_file),
 
+    url(r'^client$', views.client_api),
+
+    url(r'^order$', views.order_api),
+
     url(r'^types$', views.type_api),
     url(r'^types/([0-9]+)$', views.type_api)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

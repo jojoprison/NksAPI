@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from CatalogueApp.models import Product, Type
+from CatalogueApp.models import Product, Type, Client, Order
 
 
 class TypeSerializer(serializers.ModelSerializer):
@@ -24,3 +24,17 @@ class FilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('photo_file_name',)
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ('name', 'email', 'phone')
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+
+    class Meta:
+        model = Order
+        fields = ('client', 'price', 'products')

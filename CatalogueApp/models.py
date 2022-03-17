@@ -1,5 +1,6 @@
+import json
+
 from django.db import models
-from django.urls import reverse
 
 
 class Product(models.Model):
@@ -183,3 +184,38 @@ class Drawer(Product):
         verbose_name_plural = 'Тумбы'
 
 
+class Client(models.Model):
+    name = models.CharField(max_length=50, verbose_name='Имя заказчика')
+    email = models.CharField(max_length=50, verbose_name='Почтовый адрес')
+    first_activity_time = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+    phone = models.CharField(max_length=50, verbose_name='Номер телефона')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Информация о заказчике'
+        verbose_name_plural = 'Информация о заказчике'
+
+
+class Order(models.Model):
+    client = models.ForeignKey('Client', on_delete=models.SET_NULL, verbose_name='Заказчик', null=True)
+    # TODO придумать как сохранять список изделий, мб OnetoMany
+    products = models.CharField(max_length=500, verbose_name='Детали заказа', null=True)
+    date_order = models.DateTimeField(auto_now_add=True, verbose_name='Время заказа')
+    price = models.FloatField(max_length=50, verbose_name='Стоимость заказа')
+
+    def __str__(self):
+        return f'order_for_{self.client}#{self.id}'
+
+    def set_products(self, products):
+        self.products = json.dumps(products)
+
+    def get_products(self):
+        return json.loads(self.products)
+
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Информация о заказе'
+        verbose_name_plural = 'Информация о заказе'

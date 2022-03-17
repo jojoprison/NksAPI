@@ -1,10 +1,14 @@
+import json
+
+from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 
-from CatalogueApp.models import Product, Type
-from CatalogueApp.serializers import ProductSerializer, TypeSerializer, FilterSerializer
+from CatalogueApp.models import Product, Type, Client
+from CatalogueApp.serializers import ProductSerializer, TypeSerializer,\
+    FilterSerializer, ClientSerializer, OrderSerializer
 
 from django.core.files.storage import default_storage
 
@@ -110,6 +114,41 @@ def type_api(request, type_id=0):
         type_.delete()
 
         return JsonResponse('Type Deleted', safe=False)
+
+
+@csrf_exempt
+def client_api(request):
+    if request.method == 'POST':
+        client_data = JSONParser().parse(request)
+        client_serializer = ClientSerializer(data=client_data)
+
+        if client_serializer.is_valid():
+            client_serializer.save()
+
+        return JsonResponse('Client Added', safe=False)
+
+
+@csrf_exempt
+def order_api(request):
+    if request.method == 'POST':
+        order_data = JSONParser().parse(request)
+        # TODO сделать парсер чтоб приводить телефон к общему виду
+        order_client_phone = order_data.pop('phone')
+        order_client_email = order_data.pop('email')
+        client = None
+
+        if order_client_phone or order_client_email:
+            client = Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).first()
+
+        order_data['client'] = client.id
+        order_data['products'] = json.dumps(order_data.get('products'))
+
+        order_serializer = OrderSerializer(data=order_data)
+
+        if order_serializer.is_valid():
+            order_serializer.save()
+
+        return JsonResponse('Заказ записан епта', safe=False)
 
 
 @csrf_exempt
