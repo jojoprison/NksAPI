@@ -55,6 +55,15 @@ def product_api(request, product_id=0):
 
 
 @csrf_exempt
+def product_detail_api(request, product_id=0):
+    if request.method == 'GET':
+        product = Product.objects.get(id=product_id)
+        product_serializer = ProductSerializer(product)
+
+        return JsonResponse(product_serializer.data, safe=False)
+
+
+@csrf_exempt
 def product_filter_all_api(request):
     if request.method == 'GET':
         photo_list = list(set(Product.objects.all().values_list('photo_file_name', flat=True)))
