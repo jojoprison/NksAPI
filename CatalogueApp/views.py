@@ -55,7 +55,8 @@ def product_api(request, product_id=0):
 
 
 @csrf_exempt
-def product_detail_api(request, product_id=0):
+def product_detail_api(request, product_id):
+    print(product_id)
     if request.method == 'GET':
         product = Product.objects.get(id=product_id)
         product_serializer = ProductSerializer(product)

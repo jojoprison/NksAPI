@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^products$', views.product_api),
     url(r'^products/([0-9]+)$', views.product_api),
 
-    url(r'^product/<int:pk>$', views.product_detail_api),
+    url(r'^product/([0-9]+)$', views.product_detail_api),
 
     url(r'^products/filtersAll$', views.product_filter_all_api),
     url(r'^products/filter$', views.product_filter_api),

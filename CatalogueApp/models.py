@@ -205,6 +205,8 @@ class Order(models.Model):
     products = models.CharField(max_length=500, verbose_name='Детали заказа', null=True)
     date_order = models.DateTimeField(auto_now_add=True, verbose_name='Время заказа')
     price = models.FloatField(max_length=50, verbose_name='Стоимость заказа')
+    city = models.CharField(max_length=50, verbose_name='Город', null=True)
+    commentary = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True)
 
     def __str__(self):
         return f'order_for_{self.client}#{self.id}'
