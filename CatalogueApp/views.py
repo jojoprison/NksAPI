@@ -199,16 +199,16 @@ def order_api(request):
     if request.method == 'POST':
         order_data = JSONParser().parse(request)
         # TODO сделать парсер чтоб приводить телефон к общему виду
-        order_client_phone = order_data.pop('phone')
-        order_client_email = order_data.pop('email')
-        client = None
+        # order_client_phone = order_data.pop('phone')
+        # order_client_email = order_data.pop('email')
+        # client = None
 
-        if order_client_phone or order_client_email:
-            client = Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).first()
-            print(Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).query)
-
-        order_data['client'] = client.id
-        order_data['products'] = json.dumps(order_data.get('products'))
+        # if order_client_phone or order_client_email:
+        #     client = Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).first()
+        #     print(Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).query)
+        #
+        # order_data['client'] = client.id
+        # order_data['products'] = json.dumps(order_data.get('products'))
 
         order_serializer = OrderSerializer(data=order_data)
 

@@ -268,24 +268,33 @@ class Client(models.Model):
 
 
 class Order(models.Model):
-    client = models.ForeignKey('Client', on_delete=models.SET_NULL, verbose_name='Клиент', null=True)
+    # client = models.ForeignKey('Client', on_delete=models.SET_NULL, verbose_name='Клиент', null=True)
     # TODO придумать как сохранять список изделий, мб OnetoMany
-    products = models.CharField(max_length=500, verbose_name='Детали заказа', null=True)
+    # products = models.CharField(max_length=500, verbose_name='Детали заказа', null=True)
     date_order = models.DateTimeField(auto_now_add=True, verbose_name='Время заказа')
-    price = models.FloatField(max_length=50, verbose_name='Стоимость заказа')
+    # price = models.FloatField(max_length=50, verbose_name='Стоимость заказа')
+    name = models.CharField(max_length=100, verbose_name='Имя клиента')
+    phone = models.CharField(max_length=50, verbose_name='Номер телефона')
+    email = models.CharField(max_length=50, verbose_name='E-Mail клиента')
     city = models.CharField(max_length=50, verbose_name='Город', null=True)
     commentary = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True)
+    price = models.IntegerField(verbose_name='Сумма заказа')
 
     def __str__(self):
-        return f'order_for_{self.client}#{self.id}'
-
-    def set_products(self, products):
-        self.products = json.dumps(products)
-
-    def get_products(self):
-        return json.loads(self.products)
+        return self.name
 
     class Meta:
         ordering = ['id']
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+
+    # def __str__(self):
+    #     return f'order_for_{self.client}#{self.id}'
+    #
+    # def set_products(self, products):
+    #     self.products = json.dumps(products)
+    #
+    # def get_products(self):
+    #     return json.loads(self.products)
+
+

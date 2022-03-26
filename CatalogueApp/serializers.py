@@ -13,8 +13,13 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'title', 'type', 'photo_file_name', 'time_create', 'time_update', 'price')
-        read_only_fields = ('time_create', 'time_update', 'price')
+        fields = ('id', 'title', 'type', 'photo_file_name', 'time_create', 'time_update', 'price', 'height', 'width',
+                  'depth', 'series', 'article', 'description', 'execution_material', 'purpose', 'tabletop_material',
+                  'door_layout', 'door_quantity', 'feature', 'type_id', 'technology_rack', 'electrical_outlets',
+                  'oven_material', 'lamp', 'shelf_material', 'sink_material', 'sink_location', 'boxes', 'disposition',
+                  'gas', 'sink_count', 'sink_type', 'water', 'shelf_count', 'subtype_id', 'titration_panel',
+                  'complete_with_drawers', 'mods')
+        read_only_fields = ('time_create', 'time_update', 'price', 'mains_switch')
         # fields = ('id', 'title', 'width', 'height', 'depth', 'countertop_material', 'disposition',
         #           'execution_material', 'purpose', 'date_added', 'photo_file_name', 'description',
         #           'slug')
@@ -33,8 +38,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
-
+    # client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
     class Meta:
         model = Order
-        fields = ('client', 'price', 'products')
+        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price')
