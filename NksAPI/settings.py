@@ -43,9 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    # 'ckeditor',
+    # 'ckeditor_uploader',
+    # 'djoser',
+    #
+    # 'oauth2_provider',
+    # 'social_django',
+    # 'rest_framework_social_oauth2',
+    #
+    # 'drf_yasg',
+    'django_filters',
     'corsheaders',
     'CatalogueApp.apps.CatalogueappConfig',
-    'rest_framework'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -55,12 +66,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'NksAPI.urls'
@@ -76,6 +87,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # 'social_django.context_processors.backends',
+                # 'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -133,11 +146,101 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# TODO тож настроить
+# STATIC_DIR = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [STATIC_DIR]
+
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8000"
+]
+
+# TODO либа для скачивания файлов, можно поюзать
+# CKEDITOR_UPLOAD_PATH = "uploads/"
+
+# CKEDITOR_CONFIGS = {
+#     'default': {
+#         # 'skin': 'moono',
+#         # 'skin': 'office2013',
+#         'toolbar_Basic': [
+#             ['Source', '-', 'Bold', 'Italic']
+#         ],
+#         'toolbar_YourCustomToolbarConfig': [
+#             {'name': 'document', 'items': ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates']},
+#             {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+#             {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+#             {'name': 'forms',
+#              'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+#                        'HiddenField']},
+#             '/',
+#             {'name': 'basicstyles',
+#              'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'RemoveFormat']},
+#             {'name': 'paragraph',
+#              'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
+#                        'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl',
+#                        'Language']},
+#             {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+#             {'name': 'insert',
+#              'items': ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
+#             '/',
+#             {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+#             {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+#             {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+#             {'name': 'about', 'items': ['About']},
+#             '/',  # put this to force next toolbar on new line
+#             {'name': 'yourcustomtools', 'items': [
+#                 # put the name of your editor.ui.addButton here
+#                 'Preview',
+#                 'Maximize',
+#                 'Youtube'
+#             ]},
+#         ],
+#         'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
+#         # 'toolbarGroups': [{ 'name': 'document', 'groups': [ 'mode', 'document', 'doctools' ] }],
+#         # 'height': 291,
+#         # 'width': '100%',
+#         # 'filebrowserWindowHeight': 725,
+#         # 'filebrowserWindowWidth': 940,
+#         # 'toolbarCanCollapse': True,
+#         # 'mathJaxLib': '//cdn.mathjax.org/mathjax/2.2-latest/MathJax.js?config=TeX-AMS_HTML',
+#         'tabSpaces': 4,
+#         'extraPlugins': ','.join([
+#             'uploadimage', # the upload image feature
+#             # your extra plugins here
+#             'div',
+#             'autolink',
+#             'autoembed',
+#             'embedsemantic',
+#             'autogrow',
+#             # 'devtools',
+#             'widget',
+#             'lineutils',
+#             'clipboard',
+#             'dialog',
+#             'dialogui',
+#             'elementspath',
+#             'youtube'
+#         ]),
+#     }
+# }
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# TODO разобраться
+AUTHENTICATION_BACKENDS = (
+    # 'social_core.backends.vk.VKOAuth2',
+    # 'rest_framework_social_oauth2.backends.DjangoOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+# TODO разобраться
 JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the library",
     "show_sidebar": True,
@@ -147,3 +250,27 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     # "language_chooser": True,
 }
+
+# конфигурация DRF
+# TODO разобраться
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        # TODO узнать для чего
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    # TODO узнать для чего
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 3
+}
+
+
+# TODO для почты, настроить
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = '22222226@gmail.com'
+EMAIL_HOST_PASSWORD = '11111'
+EMAIL_PORT = 587
