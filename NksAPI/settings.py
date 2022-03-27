@@ -38,6 +38,16 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
+# ALLOWED_HOSTS = [
+#     '*'
+# ]
+
+# ALLOWED_HOSTS = [
+#     '127.0.0.1'
+#     'localhost',
+#     'nksgroup33.ru',
+# ]
+
 
 # Application definition
 
@@ -109,7 +119,7 @@ WSGI_APPLICATION = 'NksAPI.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -152,14 +162,18 @@ USE_TZ = True
 
 # TODO тож настроить
 STATIC_URL = '/static/'
-STATIC_DIR = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [STATIC_DIR]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [
+#     STATIC_ROOT,
+    # '/var/www/nksgroup33.ru/static/',
+# ]
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-CORS_ORIGIN_WHITELIST = [
-    'http://nksgroup33.ru',
-    "http://localhost:8080",
-    "http://127.0.0.1:8000"
-]
+# CORS_ORIGIN_WHITELIST = [
+#     'http://nksgroup33.ru:8000',
+#     "http://localhost:8080",
+#     "http://127.0.0.1:8000"
+# ]
 
 # TODO либа для скачивания файлов, можно поюзать
 # CKEDITOR_UPLOAD_PATH = "uploads/"
@@ -266,14 +280,14 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 3
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 3
 }
 
 
 # TODO для почты, настроить
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = '22222226@gmail.com'
-EMAIL_HOST_PASSWORD = '11111'
-EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = '22222226@gmail.com'
+# EMAIL_HOST_PASSWORD = '11111'
+# EMAIL_PORT = 587
