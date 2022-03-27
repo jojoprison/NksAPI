@@ -38,6 +38,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'nksgroup33.ru',
+    '185.219.43.45'
     'localhost',
     '127.0.0.1'
 ]
