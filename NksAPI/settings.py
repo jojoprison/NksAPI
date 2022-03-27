@@ -36,6 +36,7 @@ SECRET_KEY = 'django-insecure-&f#ban)5192jzj4lk$kxg2ts(ple6mobg0h&ni^i^ri0uc9w&a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# we are starting on 5000 port now! cuz deployed ;)
 ALLOWED_HOSTS = [
     '185.219.43.45',
     'nksgroup33.ru',
