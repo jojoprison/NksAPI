@@ -5,14 +5,53 @@ from functools import reduce
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from rest_framework.response import Response
 
 from CatalogueApp.models import Product, Type, Client
-from CatalogueApp.serializers import ProductSerializer, TypeSerializer,\
-    FilterSerializer, ClientSerializer, OrderSerializer
+from CatalogueApp.serializers import (
+    TypeDetailSerializer,
+    SubtypeDetailSerializer,
+    OrderSerializer,
+    ClientSerializer, ProductListSerializer, ProductDetailSerializer
+)
 
 from django.core.files.storage import default_storage
+
+
+from .service import ProductFilter, get_client_ip, PaginationProducts
+
+
+# ModelViewSet
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ProductFilter
+    pagination_class = PaginationProducts
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            return Product.objects.all()[:50]
+
+        # queryset должен возвращать список, а фильтер тоже всегда возвращает список
+        return Product.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProductListSerializer
+        elif self.action == 'retrieve':
+            return ProductDetailSerializer
+
+    # добавляет новый маршрут во view_set
+    # @action(methods=['get'], detail=True)
+    # def type(self, request, pk=None):
+    #     type = Type.objects.get(pk=pk)
+    #     return Response({'type_id': type.id})
 
 
 @csrf_exempt

@@ -1,8 +1,12 @@
 from django.conf.urls import url
+from django.urls import path
+
 from CatalogueApp import views
 
 from django.conf.urls.static import static
 from django.conf import settings
+
+from CatalogueApp.views import ProductViewSet
 
 urlpatterns = [
     url(r'^products$', views.product_api),
@@ -21,6 +25,9 @@ urlpatterns = [
     url(r'^order$', views.order_api),
 
     url(r'^types$', views.type_api),
-    url(r'^types/([0-9]+)$', views.type_api)
+    url(r'^types/([0-9]+)$', views.type_api),
+
+    path('api/product/', ProductViewSet.as_view({'get': 'list'})),
+    path('api/product/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
