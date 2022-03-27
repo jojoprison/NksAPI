@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^types$', views.type_api),
     url(r'^types/([0-9]+)$', views.type_api),
 
-    path('api/product/', ProductViewSet.as_view({'get': 'list'})),
-    path('api/product/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
+    path('api/products/', ProductViewSet.as_view({'get': 'list'})),
+    path('api/products/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
