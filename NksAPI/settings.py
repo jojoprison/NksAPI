@@ -37,8 +37,8 @@ SECRET_KEY = 'django-insecure-&f#ban)5192jzj4lk$kxg2ts(ple6mobg0h&ni^i^ri0uc9w&a
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    '185.219.43.45',
     'nksgroup33.ru',
-    '185.219.43.45'
     'localhost',
     '127.0.0.1'
 ]
