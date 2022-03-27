@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-&f#ban)5192jzj4lk$kxg2ts(ple6mobg0h&ni^i^ri0uc9w&a
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '.nksgroup33.ru',
+    'nksgroup33.ru',
     'localhost',
     '127.0.0.1'
 ]
