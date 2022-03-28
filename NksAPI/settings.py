@@ -39,7 +39,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
-    'http://nksgroup33.ru'
+    'http://nksgroup33.ru',
+    "http://127.0.0.1:8000",
+    "http://localhost:5000",
+    "http://localhost:8000",
+    'http://nksgroup33.ru:8000',
 ]
 
 # CORS_ORIGIN_WHITELIST = [
