@@ -63,7 +63,7 @@ INSTALLED_APPS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 # TODO заполнить
-CORS_ORIGIN_WHITELIST = ('nksgroup33.ru', '185.219.43.45', '127.0.0.1')
+CORS_ORIGIN_WHITELIST = ('http://nksgroup33.ru', 'http://185.219.43.45', 'http://127.0.0.1')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
