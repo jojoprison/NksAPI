@@ -108,7 +108,6 @@ def product_detail_api(request, product_id):
         return JsonResponse(product_serializer.data, safe=False)
 
 
-@csrf_exempt
 def product_filter_all_api(request):
     if request.method == 'GET':
         published_products = Product.objects.filter(is_published=True)
@@ -160,7 +159,6 @@ def product_filter_all_api(request):
         return JsonResponse(filter_variant_list, safe=False)
 
 
-@csrf_exempt
 def product_filter_api(request):
     if request.method == 'GET':
         filter_kwargs = []
