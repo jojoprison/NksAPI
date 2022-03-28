@@ -5,7 +5,7 @@ from django.db import models
 
 class Product(models.Model):
     # общие поля для всех
-    title = models.CharField(max_length=50, verbose_name='Название')
+    title = models.CharField(max_length=120, verbose_name='Название')
     series = models.CharField(max_length=40, verbose_name='Серия', null=True)
     article = models.CharField(max_length=40, verbose_name='Артикул', null=True)
     width = models.PositiveIntegerField(verbose_name='Ширина', null=True)
@@ -23,7 +23,7 @@ class Product(models.Model):
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)
     # TODO swappable
-    type = models.ForeignKey('Type', on_delete=models.SET_DEFAULT, default='1', verbose_name='Тип',
+    type = models.ForeignKey('Type', on_delete=models.SET_NULL, null=True, verbose_name='Тип',
                              related_name='products')
     subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, null=True, verbose_name='Подтип',
                                 related_name='products')
@@ -134,15 +134,18 @@ class Type(models.Model):
 
 
 class Subtype(models.Model):
-    title = models.CharField(max_length=50, db_index=True, verbose_name='Подтип изделия', unique=True,
+    title = models.CharField(max_length=50, db_index=True, verbose_name='Подтип', unique=True,
                              null=True)
     type = models.ForeignKey('Type', on_delete=models.SET_NULL, verbose_name='Тип', null=True,
                              related_name='subtypes')
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         ordering = ['id']
-        verbose_name = 'Подтип изделия'
-        verbose_name_plural = 'Подтип изделий'
+        verbose_name = 'Подтип'
+        verbose_name_plural = 'Подтип'
 
 
 class TableManager(models.Manager):
@@ -172,7 +175,7 @@ class CabinetManager(models.Manager):
         return super().get_queryset().filter(type__title='Шкаф')
 
 
-# TODO ПОКА НЕ ДЕЛАЕМ ЭЛЬВИРА СКАЗАЛА
+# ПОКА НЕ ДЕЛАЕМ ЭЛЬВИРА СКАЗАЛА
 class Cabinet(Product):
     objects = CabinetManager()
 
@@ -277,11 +280,12 @@ class Order(models.Model):
     phone = models.CharField(max_length=50, verbose_name='Номер телефона')
     email = models.CharField(max_length=50, verbose_name='E-Mail клиента')
     city = models.CharField(max_length=50, verbose_name='Город', null=True)
-    commentary = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True)
+    comment = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True,
+                                  blank=True)
     price = models.IntegerField(verbose_name='Сумма заказа')
 
     def __str__(self):
-        return self.name
+        return f'Заказ №{self.id}; тел. {self.phone} {self.name}'
 
     class Meta:
         ordering = ['id']

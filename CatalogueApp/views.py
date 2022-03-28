@@ -2,6 +2,7 @@ import json
 import operator
 from functools import reduce
 
+from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -33,12 +34,16 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = PaginationProducts
 
     def get_queryset(self):
+        # longitude = self.request.query_params.get('longitude')
+        # latitude = self.request.query_params.get('latitude')
+        # radius = self.request.query_params.get('radius')
+
         pk = self.kwargs.get('pk')
 
         if not pk:
-            return Product.objects.all()[:50]
+            return Product.objects.all()
 
-        # queryset должен возвращать список, а фильтер тоже всегда возвращает список
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
         return Product.objects.filter(pk=pk)
 
     def get_serializer_class(self):
@@ -58,13 +63,13 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 def product_api(request, product_id=0):
     if request.method == 'GET':
         products = Product.objects.all()
-        product_serializer = ProductSerializer(products, many=True)
+        product_serializer = ProductDetailSerializer(products, many=True)
 
         return JsonResponse(product_serializer.data, safe=False)
 
     elif request.method == 'POST':
         product_data = JSONParser().parse(request)
-        product_serializer = ProductSerializer(data=product_data)
+        product_serializer = ProductDetailSerializer(data=product_data)
 
         if product_serializer.is_valid():
             product_serializer.save()
@@ -77,7 +82,7 @@ def product_api(request, product_id=0):
         product_data = JSONParser().parse(request)
 
         product = Product.objects.get(id=product_data['id'])
-        product_serializer = ProductSerializer(product, data=product_data)
+        product_serializer = ProductDetailSerializer(product, data=product_data)
 
         if product_serializer.is_valid():
             product_serializer.save()
@@ -98,7 +103,7 @@ def product_detail_api(request, product_id):
     print(product_id)
     if request.method == 'GET':
         product = Product.objects.get(id=product_id)
-        product_serializer = ProductSerializer(product)
+        product_serializer = ProductDetailSerializer(product)
 
         return JsonResponse(product_serializer.data, safe=False)
 
@@ -106,16 +111,21 @@ def product_detail_api(request, product_id):
 @csrf_exempt
 def product_filter_all_api(request):
     if request.method == 'GET':
-        photo_list = list(set(Product.objects.all().values_list('photo_file_name', flat=True)))
-        photo_list.sort()
-        print(photo_list)
+        published_products = Product.objects.filter(is_published=True)
+        print(len(published_products))
 
-        price_list = list(set(Product.objects.all().exclude(price=None).values_list('price', flat=True)))
-        print(price_list)
+        photo_list = list(set(published_products.values_list('photo_file_name', flat=True)))
+        # TODO не сортируется потому что у некоторых товаров ссылки на картинки вместо фоток
+        # photo_list.sort()
+        # print(len(photo_list))
+
+        price_list = list(set(published_products.exclude(price=None)[:50].values_list('price', flat=True)))
+        # print(price_list)
         price_list.sort()
 
-        type_list = list(set(Product.objects.all().values_list('type__title', flat=True)))
+        type_list = list(set(published_products.values_list('type', flat=True)))
         type_list.sort()
+        # print(type_list)
 
         filter_variant_list = {
             'select': [
@@ -145,7 +155,7 @@ def product_filter_all_api(request):
             'checkbox': ['is_published', 'lol', 'temp']
         }
 
-        print(filter_variant_list)
+        # print(filter_variant_list)
 
         return JsonResponse(filter_variant_list, safe=False)
 
@@ -166,6 +176,8 @@ def product_filter_api(request):
             else:
                 filter_kwargs.append(Q(**{item[0]: item[1]}))
 
+        # TODO продукты должны быть опубликованы, иначе возвращает 3500 штук
+        filter_kwargs.append(Q(**{'is_published': True}))
         print(filter_kwargs)
 
         # TODO заменить проверки вот тут
@@ -177,7 +189,9 @@ def product_filter_api(request):
             else:
                 prods_by_photo = Product.objects.all()
 
-        product_serializer = ProductSerializer(prods_by_photo, many=True)
+        print(prods_by_photo)
+
+        product_serializer = ProductDetailSerializer(prods_by_photo, many=True)
 
         return JsonResponse(product_serializer.data, safe=False)
 

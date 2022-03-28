@@ -15,12 +15,6 @@ import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-# old
-# PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-# another old...
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# incorrect
-# BASE_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = '/media/'
@@ -36,24 +30,12 @@ SECRET_KEY = 'django-insecure-&f#ban)5192jzj4lk$kxg2ts(ple6mobg0h&ni^i^ri0uc9w&a
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# we are starting on 5000 port now! cuz deployed ;)
 ALLOWED_HOSTS = [
     '185.219.43.45',
     'nksgroup33.ru',
     'localhost',
     '127.0.0.1'
 ]
-
-# ALLOWED_HOSTS = [
-#     '*'
-# ]
-
-# ALLOWED_HOSTS = [
-#     '127.0.0.1'
-#     'localhost',
-#     'nksgroup33.ru',
-# ]
-
 
 # Application definition
 
@@ -171,7 +153,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATICFILES_DIRS = [
 #     STATIC_ROOT,
-    # '/var/www/nksgroup33.ru/static/',
+    # '/var/www/static/',
 # ]
 # STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 

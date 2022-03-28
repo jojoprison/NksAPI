@@ -1,13 +1,14 @@
+import django_filters
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from .models import Product
+from .models import Product, Type
 
 
 class PaginationProducts(PageNumberPagination):
     page_size = 12
-    max_page_size = 100
+    max_page_size = 50
 
     def get_paginated_response(self, data):
         return Response({
@@ -25,13 +26,48 @@ class NumberFilterInFilter(filters.BaseInFilter, filters.NumberFilter):
     pass
 
 
+class EmptyStringPlugFilter(filters.CharFilter):
+    empty_value = 'EMPTY'
+
+    def filter(self, qs, value):
+        if value != self.empty_value:
+            return super().filter(qs, value)
+
+        qs = self.get_method(qs)(**{'%s__%s' % (self.field_name, self.lookup_expr): ""})
+        return qs.distinct() if self.distinct else qs
+
+
+class EmptyValueStringFilter(filters.BooleanFilter):
+    def filter(self, qs, value):
+        if value in [None, 'Не указано', 'Не задано', 'Любое', 'Пустое']:
+            return qs
+
+        exclude = self.exclude ^ (value is False)
+        method = qs.exclude if exclude else qs.filter
+
+        return method(**{self.field_name: ""})
+
+# пример если хотим так на пустоту првоерять
+# class MyFilterSet(filters.FilterSet):
+#     myfield__isempty = EmptyValueStringFilter(field_name='myfield')
+#
+#     class Meta:
+#         model = MyModel
+#         fields = []
+
+
 class ProductFilter(filters.FilterSet):
-    type = NumberFilterInFilter(field_name='type_id', lookup_expr='in')
-    series = filters.CharFilter()
+    # type = NumberFilterInFilter(field_name='type_id', lookup_expr='in')
+
+    # type = django_filters.ModelChoiceFilter(
+    #     field_name='type', lookup_expr='isnull',
+    #     null_label='Без типа',
+    #     queryset=Type.objects.all(),
+    # )
 
     class Meta:
         model = Product
-        fields = ['type', 'series']
+        fields = ['type', 'series', 'subtype']
 
 
 def get_client_ip(request):
