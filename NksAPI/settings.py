@@ -65,8 +65,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 # TODO заполнить
 CORS_ORIGIN_WHITELIST = [
     # 'http://nksgroup33.ru',
-    # 'http://185.219.43.45',
-    'http://127.0.0.1:8000'
+    'http://185.219.43.45:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080'
 ]
 
 MIDDLEWARE = [
