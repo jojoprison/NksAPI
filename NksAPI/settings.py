@@ -47,13 +47,13 @@ CORS_ALLOW_CREDENTIALS = True
 #     'http://nksgroup33.ru:8000'
 # ]
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://185.219.43.45',
-#     "http://127.0.0.1",
-#     'http://nksgroup33.ru'
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://185.219.43.45',
+    "http://127.0.0.1",
+    'http://nksgroup33.ru:8000'
+]
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
