@@ -39,6 +39,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
+    'http://nksgroup33.ru'
 ]
 
 # CORS_ORIGIN_WHITELIST = [
