@@ -49,8 +49,6 @@ CORS_ORIGIN_WHITELIST = [
     'http://nksgroup33.ru'
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
