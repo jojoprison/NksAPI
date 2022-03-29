@@ -18,7 +18,7 @@ class Product(models.Model):
     photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
-    description = models.CharField(max_length=500, blank=True, verbose_name='Описание', null=True)
+    description = models.CharField(max_length=2000, blank=True, verbose_name='Описание', null=True)
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)
@@ -27,8 +27,6 @@ class Product(models.Model):
                              related_name='products')
     subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, null=True, verbose_name='Подтип',
                                 related_name='products')
-
-    # TODO добавить поле для mods
 
     # поля для столов обычных/моек/тумб
     execution_material = models.CharField(max_length=50, verbose_name='Материал исполнения', null=True)
@@ -89,7 +87,7 @@ class Product(models.Model):
                                              null=True)
 
     # модификации с Лабстола, там интересно сделано переключение между вариантами
-    mods = models.CharField(max_length=150, verbose_name='Модификации', null=True)
+    mods = models.CharField(max_length=1000, verbose_name='Модификации', null=True)
 
     # TODO дополнить базу этим, когда будет время
     # доп оборудование(ток для одной/растений)
@@ -272,17 +270,16 @@ class Client(models.Model):
 
 class Order(models.Model):
     # client = models.ForeignKey('Client', on_delete=models.SET_NULL, verbose_name='Клиент', null=True)
-    # TODO придумать как сохранять список изделий, мб OnetoMany
-    # products = models.CharField(max_length=500, verbose_name='Детали заказа', null=True)
     date_order = models.DateTimeField(auto_now_add=True, verbose_name='Время заказа')
-    # price = models.FloatField(max_length=50, verbose_name='Стоимость заказа')
     name = models.CharField(max_length=100, verbose_name='Имя клиента')
-    phone = models.CharField(max_length=50, verbose_name='Номер телефона')
-    email = models.CharField(max_length=50, verbose_name='E-Mail клиента')
-    city = models.CharField(max_length=50, verbose_name='Город', null=True)
-    comment = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True,
+    phone = models.CharField(max_length=50, verbose_name='Номер телефона клиента')
+    email = models.CharField(max_length=100, verbose_name='E-mail клиента')
+    city = models.CharField(max_length=50, verbose_name='Город', null=True, blank=True)
+    commentary = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True,
                                   blank=True)
     price = models.IntegerField(verbose_name='Сумма заказа')
+    delivery = models.CharField(max_length=50, null=True, blank=True, verbose_name='Вариант доставки')
+    products = models.CharField(max_length=300, verbose_name='Товары')
 
     def __str__(self):
         return f'Заказ №{self.id}; тел. {self.phone} {self.name}'
@@ -300,5 +297,3 @@ class Order(models.Model):
     #
     # def get_products(self):
     #     return json.loads(self.products)
-
-

@@ -48,7 +48,7 @@ urlpatterns = [
     # path('types/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
     # path('subtypes/', ProductViewSet.as_view({'get': 'list'})),
     # path('subtypes/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('order/', ProductViewSet.as_view({'get': 'list'})),
+    path('order/', views.order_api),
 
     # пока не нужен, мб в будущем когда ЛК будет
     # path('client/', ProductViewSet.as_view({'get': 'list'})),

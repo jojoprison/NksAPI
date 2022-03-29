@@ -87,4 +87,4 @@ class OrderSerializer(serializers.ModelSerializer):
     # client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
     class Meta:
         model = Order
-        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price')
+        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price', 'delivery', 'products')

@@ -249,6 +249,22 @@ def client_api(request):
 def order_api(request):
     if request.method == 'POST':
         order_data = JSONParser().parse(request)
+
+        items = order_data.get('items')
+        products_db = []
+
+        for item in items:
+            item_id = item.get('id')
+            item_quantity = item.get('quantity')
+            item_price = item.get('price')
+
+            product = {'id': item_id, 'quantity': item_quantity, 'price': item_price}
+            products_db.append(product)
+
+        order_data.pop('items')
+        products_db_str = json.dumps(products_db)
+        order_data['products'] = products_db_str
+
         # TODO сделать парсер чтоб приводить телефон к общему виду
         # order_client_phone = order_data.pop('phone')
         # order_client_email = order_data.pop('email')
@@ -259,14 +275,15 @@ def order_api(request):
         #     print(Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).query)
         #
         # order_data['client'] = client.id
-        # order_data['products'] = json.dumps(order_data.get('products'))
 
         order_serializer = OrderSerializer(data=order_data)
 
         if order_serializer.is_valid():
             order_serializer.save()
 
-        return JsonResponse('Заказ записан епта', safe=False)
+            return JsonResponse('Заказ сохранен', safe=False)
+
+        return JsonResponse('Заказ НЕ сохранен', safe=False)
 
 
 @csrf_exempt
