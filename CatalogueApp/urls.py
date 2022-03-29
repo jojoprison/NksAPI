@@ -52,5 +52,4 @@ urlpatterns = [
 
     # пока не нужен, мб в будущем когда ЛК будет
     # path('client/', ProductViewSet.as_view({'get': 'list'})),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+]
