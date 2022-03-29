@@ -2,30 +2,74 @@ import json
 import operator
 from functools import reduce
 
+from django.contrib.gis.measure import D
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from rest_framework.response import Response
 
 from CatalogueApp.models import Product, Type, Client
-from CatalogueApp.serializers import ProductSerializer, TypeSerializer,\
-    FilterSerializer, ClientSerializer, OrderSerializer
+from CatalogueApp.serializers import (
+    TypeDetailSerializer,
+    SubtypeDetailSerializer,
+    OrderSerializer,
+    ClientSerializer, ProductListSerializer, ProductDetailSerializer
+)
 
 from django.core.files.storage import default_storage
+
+
+from .service import ProductFilter, get_client_ip, PaginationProducts
+
+
+# ModelViewSet
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ProductFilter
+    pagination_class = PaginationProducts
+
+    def get_queryset(self):
+        # longitude = self.request.query_params.get('longitude')
+        # latitude = self.request.query_params.get('latitude')
+        # radius = self.request.query_params.get('radius')
+
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            return Product.objects.all()
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Product.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProductListSerializer
+        elif self.action == 'retrieve':
+            return ProductDetailSerializer
+
+    # добавляет новый маршрут во view_set
+    # @action(methods=['get'], detail=True)
+    # def type(self, request, pk=None):
+    #     type = Type.objects.get(pk=pk)
+    #     return Response({'type_id': type.id})
 
 
 @csrf_exempt
 def product_api(request, product_id=0):
     if request.method == 'GET':
         products = Product.objects.all()
-        product_serializer = ProductSerializer(products, many=True)
+        product_serializer = ProductDetailSerializer(products, many=True)
 
         return JsonResponse(product_serializer.data, safe=False)
 
     elif request.method == 'POST':
         product_data = JSONParser().parse(request)
-        product_serializer = ProductSerializer(data=product_data)
+        product_serializer = ProductDetailSerializer(data=product_data)
 
         if product_serializer.is_valid():
             product_serializer.save()
@@ -38,7 +82,7 @@ def product_api(request, product_id=0):
         product_data = JSONParser().parse(request)
 
         product = Product.objects.get(id=product_data['id'])
-        product_serializer = ProductSerializer(product, data=product_data)
+        product_serializer = ProductDetailSerializer(product, data=product_data)
 
         if product_serializer.is_valid():
             product_serializer.save()
@@ -59,24 +103,28 @@ def product_detail_api(request, product_id):
     print(product_id)
     if request.method == 'GET':
         product = Product.objects.get(id=product_id)
-        product_serializer = ProductSerializer(product)
+        product_serializer = ProductDetailSerializer(product)
 
         return JsonResponse(product_serializer.data, safe=False)
 
 
-@csrf_exempt
 def product_filter_all_api(request):
     if request.method == 'GET':
-        photo_list = list(set(Product.objects.all().values_list('photo_file_name', flat=True)))
-        photo_list.sort()
-        print(photo_list)
+        published_products = Product.objects.filter(is_published=True)
+        print(len(published_products))
 
-        price_list = list(set(Product.objects.all().exclude(price=None).values_list('price', flat=True)))
-        print(price_list)
+        photo_list = list(set(published_products.values_list('photo_file_name', flat=True)))
+        # TODO не сортируется потому что у некоторых товаров ссылки на картинки вместо фоток
+        # photo_list.sort()
+        # print(len(photo_list))
+
+        price_list = list(set(published_products.exclude(price=None)[:50].values_list('price', flat=True)))
+        # print(price_list)
         price_list.sort()
 
-        type_list = list(set(Product.objects.all().values_list('type__title', flat=True)))
+        type_list = list(set(published_products.values_list('type', flat=True)))
         type_list.sort()
+        # print(type_list)
 
         filter_variant_list = {
             'select': [
@@ -106,12 +154,11 @@ def product_filter_all_api(request):
             'checkbox': ['is_published', 'lol', 'temp']
         }
 
-        print(filter_variant_list)
+        # print(filter_variant_list)
 
         return JsonResponse(filter_variant_list, safe=False)
 
 
-@csrf_exempt
 def product_filter_api(request):
     if request.method == 'GET':
         filter_kwargs = []
@@ -127,6 +174,8 @@ def product_filter_api(request):
             else:
                 filter_kwargs.append(Q(**{item[0]: item[1]}))
 
+        # TODO продукты должны быть опубликованы, иначе возвращает 3500 штук
+        filter_kwargs.append(Q(**{'is_published': True}))
         print(filter_kwargs)
 
         # TODO заменить проверки вот тут
@@ -138,7 +187,9 @@ def product_filter_api(request):
             else:
                 prods_by_photo = Product.objects.all()
 
-        product_serializer = ProductSerializer(prods_by_photo, many=True)
+        print(prods_by_photo)
+
+        product_serializer = ProductDetailSerializer(prods_by_photo, many=True)
 
         return JsonResponse(product_serializer.data, safe=False)
 
@@ -199,16 +250,16 @@ def order_api(request):
     if request.method == 'POST':
         order_data = JSONParser().parse(request)
         # TODO сделать парсер чтоб приводить телефон к общему виду
-        order_client_phone = order_data.pop('phone')
-        order_client_email = order_data.pop('email')
-        client = None
+        # order_client_phone = order_data.pop('phone')
+        # order_client_email = order_data.pop('email')
+        # client = None
 
-        if order_client_phone or order_client_email:
-            client = Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).first()
-            print(Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).query)
-
-        order_data['client'] = client.id
-        order_data['products'] = json.dumps(order_data.get('products'))
+        # if order_client_phone or order_client_email:
+        #     client = Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).first()
+        #     print(Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).query)
+        #
+        # order_data['client'] = client.id
+        # order_data['products'] = json.dumps(order_data.get('products'))
 
         order_serializer = OrderSerializer(data=order_data)
 
