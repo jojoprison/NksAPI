@@ -280,9 +280,10 @@ class Order(models.Model):
     phone = models.CharField(max_length=50, verbose_name='Номер телефона')
     email = models.CharField(max_length=50, verbose_name='E-Mail клиента')
     city = models.CharField(max_length=50, verbose_name='Город', null=True)
-    comment = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True,
+    commentary = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True,
                                   blank=True)
     price = models.IntegerField(verbose_name='Сумма заказа')
+    radio = models.CharField(max_length=50, verbose_name='Способ доставки', null=True)
 
     def __str__(self):
         return f'Заказ №{self.id}; тел. {self.phone} {self.name}'

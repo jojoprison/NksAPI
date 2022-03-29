@@ -76,7 +76,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         #           'execution_material', 'purpose', 'date_added', 'photo_file_name', 'description',
         #           'slug')
 
-
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
@@ -87,4 +86,4 @@ class OrderSerializer(serializers.ModelSerializer):
     # client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
     class Meta:
         model = Order
-        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price')
+        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price', 'radio')

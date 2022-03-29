@@ -200,13 +200,13 @@ def product_filter_api(request):
 def type_api(request, type_id=0):
     if request.method == 'GET':
         types = Type.objects.all()
-        type_serializer = TypeSerializer(types, many=True)
+        type_serializer = TypeDetailSerializer(types, many=True)
 
         return JsonResponse(type_serializer.data, safe=False)
 
     elif request.method == 'POST':
         type_data = JSONParser().parse(request)
-        type_serializer = TypeSerializer(data=type_data)
+        type_serializer = TypeDetailSerializer(data=type_data)
 
         if type_serializer.is_valid():
             type_serializer.save()
@@ -219,7 +219,7 @@ def type_api(request, type_id=0):
         type_data = JSONParser().parse(request)
 
         type_ = Type.objects.get(id=type_data['id'])
-        type_serializer = TypeSerializer(type_, data=type_data)
+        type_serializer = TypeDetailSerializer(type_, data=type_data)
 
         if type_serializer.is_valid():
             type_serializer.save()
