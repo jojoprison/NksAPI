@@ -3,7 +3,7 @@ import operator
 from functools import reduce
 
 from django.contrib.gis.measure import D
-from django.db.models import Q
+from django.db.models import Q, BooleanField
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
@@ -110,7 +110,7 @@ def product_detail_api(request, product_id):
 
 def product_filter_all_api(request):
     if request.method == 'GET':
-        published_products = Product.objects.filter(is_published=True)
+        published_products = Product.objects.all()
         print(len(published_products))
 
         photo_list = list(set(published_products.values_list('photo_file_name', flat=True)))
@@ -118,40 +118,53 @@ def product_filter_all_api(request):
         # photo_list.sort()
         # print(len(photo_list))
 
-        price_list = list(set(published_products.exclude(price=None)[:50].values_list('price', flat=True)))
-        # print(price_list)
-        price_list.sort()
+        # price_list = Product.objects.order_by('price').values_list('price', flat=True).distinct()
+        #     # list(set(published_products.exclude(price=None).values_list('price', flat=True)))
+        # # print(price_list)
+        # price_list.sort()
 
-        type_list = list(set(published_products.values_list('type', flat=True)))
-        type_list.sort()
+        fields = [f for f in Product._meta.fields]
+        select_list = []
+        checkbox_list = []
+        for field in fields:
+            # queries.append(Q(**{field.name: SEARCH_TERM}))
+            excluded = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published', 'id',
+                        'title', 'type', 'subtype', 'oven_material', 'door_material']
+            if field.name not in excluded:
+                if not isinstance(field, BooleanField):
+                    values = list(Product.objects.order_by(field.name).values_list(field.name, flat=True).distinct())
+                    select = {'product_prop': field.name,
+                              'name': field.verbose_name,
+                              'values': values}
+                    select_list.append(select)
+                else:
+                    checkbox_list.append(field.name)
+
+
+
+
+        # qs = Q()
+        # for query in queries:
+        #     qs = qs | query
+        #
+        # Product.objects.filter(qs)
+
+        # width_list = list(set(published_products.exclude(width=None).values_list('width', flat=True)))
+        # width_list.sort()
+        #
+        # height_list = list(set(published_products.exclude(height=None).values_list('height', flat=True)))
+        # height_list.sort()
+        #
+        #
+        # type_list = list(set(published_products.values_list('type', flat=True)))
+        # type_list.sort()
         # print(type_list)
+        # print(res)
+
 
         filter_variant_list = {
-            'select': [
-                {'product_prop': 'type',
-                 # TODO мб как то можно verbose_name засунуть из модельки сюда
-                 'name': 'Тип',
-                 'values': type_list},
-                {'product_prop': 'price',
-                 'name': 'Цена',
-                 'values': price_list},
-                {'product_prop': 'photo_file_name',
-                 'name': 'Фото',
-                 'values': photo_list},
-                {'product_prop': 'width',
-                 'name': 'Ширина',
-                 'values': photo_list},
-                {'product_prop': 'photo_file_name',
-                 'name': 'Фото',
-                 'values': photo_list},
-                {'product_prop': 'photo_file_name',
-                 'name': 'Фото',
-                 'values': photo_list},
-                {'product_prop': 'photo_file_name',
-                 'name': 'Фото',
-                 'values': photo_list},
-            ],
-            'checkbox': ['is_published', 'lol', 'temp']
+            'select': select_list,
+            'checkbox': checkbox_list
         }
 
         # print(filter_variant_list)
