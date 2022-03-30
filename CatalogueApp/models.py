@@ -15,7 +15,7 @@ class Product(models.Model):
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     # TODO придумать че делать с множественным фотками, пока добавляю первую
-    photo_file_name = models.CharField(max_length=100, null=True, verbose_name='Фото')
+    photo_file_name = models.CharField(max_length=150, null=True, blank=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
     description = models.CharField(max_length=2000, blank=True, verbose_name='Описание', null=True)
@@ -88,6 +88,8 @@ class Product(models.Model):
 
     # модификации с Лабстола, там интересно сделано переключение между вариантами
     mods = models.CharField(max_length=1000, verbose_name='Модификации', null=True)
+    # заглушка для объектов, не имеющих фотку
+    is_correct_photo = models.BooleanField(verbose_name='Корректно ли фото', default=False)
 
     # TODO дополнить базу этим, когда будет время
     # доп оборудование(ток для одной/растений)
