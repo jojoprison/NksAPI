@@ -187,8 +187,8 @@ def product_filter_api(request):
             else:
                 filter_kwargs.append(Q(**{item[0]: item[1]}))
 
-        # TODO продукты должны быть опубликованы, иначе возвращает 3500 штук
-        filter_kwargs.append(Q(**{'is_published': True}))
+        # TODO выводим все (не только опубликованные)
+        # filter_kwargs.append(Q(**{'is_published': True}))
         # print(filter_kwargs)
 
         # TODO заменить проверки вот тут
