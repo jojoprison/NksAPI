@@ -66,6 +66,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     # TODO мб сделать так на фореин кеи, посмотреть
     # category = serializers.SlugRelatedField(slug_field="name", read_only=True)
 
+    type = ReturnTitleSerializer(read_only=True)
+
     class Meta:
         model = Product
         fields = '__all__'

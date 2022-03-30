@@ -18,7 +18,6 @@ urlpatterns = [
     path('products/filtersAll', views.product_filter_all_api),
     path('products/filter', views.product_filter_api),
 
-    #
     # url(r'^client$', views.client_api),
     #
     # url(r'^order$', views.order_api),

@@ -176,20 +176,20 @@ def product_filter_api(request):
 
         # TODO продукты должны быть опубликованы, иначе возвращает 3500 штук
         filter_kwargs.append(Q(**{'is_published': True}))
-        print(filter_kwargs)
+        # print(filter_kwargs)
 
         # TODO заменить проверки вот тут
         if request.GET.get('photo', None) == 'ALL':
-            prods_by_photo = Product.objects.all()
+            products = Product.objects.all()
         else:
             if filter_kwargs:
-                prods_by_photo = Product.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+                products = Product.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
             else:
-                prods_by_photo = Product.objects.all()
+                products = Product.objects.all()
 
-        print(prods_by_photo)
+        # print(products)
 
-        product_serializer = ProductDetailSerializer(prods_by_photo, many=True)
+        product_serializer = ProductDetailSerializer(products, many=True)
 
         return JsonResponse(product_serializer.data, safe=False)
 
@@ -281,9 +281,9 @@ def order_api(request):
         if order_serializer.is_valid():
             order_serializer.save()
 
-            return JsonResponse('Заказ сохранен', safe=False)
+            return JsonResponse('Заказ оформлен', safe=False)
 
-        return JsonResponse('Заказ НЕ сохранен', safe=False)
+        return JsonResponse('Не удалось оформить заказ', safe=False)
 
 
 @csrf_exempt
