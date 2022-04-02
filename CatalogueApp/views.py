@@ -3,7 +3,7 @@ import operator
 from functools import reduce
 
 from django.contrib.gis.measure import D
-from django.db.models import Q, BooleanField, F, CharField
+from django.db.models import Q, BooleanField, F, CharField, JSONField
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
@@ -129,32 +129,47 @@ def product_filter_all_api(request):
         for field in fields:
             # queries.append(Q(**{field.name: SEARCH_TERM}))
             excluded = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published', 'id',
-                        'title', 'type', 'subtype', 'oven_material', 'door_material', 'price', 'mods']
+                        'title', 'type', 'subtype', 'price', 'mods']
+            # json_fields = ['features', 'door_layout', 'shelf_material', 'complete_with_drawers', 'mods', ]
 
-            if field.name not in excluded:
-                if not isinstance(field, BooleanField):
-                    field_name = field.name
+            field_name = field.name
 
+            if field_name not in excluded:
+                if isinstance(field, BooleanField):
+                    checkbox_list.append(field.name)
+                else:
                     excludes = None
 
-                    null_q = Q(**{f'{field_name}__isnull': True})
-                    # makes sure excludes is set properly
-                    excludes = (excludes and (excludes | null_q)) or null_q
-                    if isinstance(field, CharField):
-                        empty_q = Q(**{f'{field_name}__exact': ''})
+                    if isinstance(field, JSONField):
+                        empty_q = Q(**{f'{field_name}__exact': '[]'})
                         excludes = (excludes and (excludes | empty_q)) or empty_q
 
-                    pre_excluded_values = Product.objects.order_by(field_name).values_list(field_name, flat=True)\
-                        .distinct()
-                    values_minus_excluded = pre_excluded_values.exclude(excludes)
-                    values = list(values_minus_excluded)
+                        # TODO на фронте делать мультиселект для таких полей
+                    else:
+                        excludes = None
 
-                    select = {'product_prop': field.name,
-                              'name': field.verbose_name,
-                              'values': values}
-                    select_list.append(select)
-                else:
-                    checkbox_list.append(field.name)
+                        null_q = Q(**{f'{field_name}__isnull': True})
+                        # makes sure excludes is set properly
+                        excludes = (excludes and (excludes | null_q)) or null_q
+                        if isinstance(field, CharField):
+                            empty_q = Q(**{f'{field_name}__exact': ''})
+                            excludes = (excludes and (excludes | empty_q)) or empty_q
+
+                        pre_excluded_values = Product.objects.order_by(field_name).values_list(field_name, flat=True) \
+                            .distinct()
+                        values_minus_excluded = pre_excluded_values.exclude(excludes)
+                        values = list(values_minus_excluded)
+
+                        if field_name == 'features':
+                            print(values)
+
+                        select = {'product_prop': field.name,
+                                  'name': field.verbose_name,
+                                  'values': values}
+                        select_list.append(select)
+
+        # print(select_list)
+
 
         # qs = Q()
         # for query in queries:
