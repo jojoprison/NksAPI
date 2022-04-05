@@ -95,9 +95,10 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
 class TableListSerializer(serializers.ModelSerializer):
     subtype = ReturnTitleSerializer(read_only=True)
+    
     class Meta:
         model = Table
-        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+        fields = ('id', 'title', 'type', 'subtype', 'series', 'article', 'price',
                   'width', 'height', 'depth', 'description', 'execution_material',
                   'purpose', 'oven_material', 'tabletop_material', 'door_layout',
                   'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',

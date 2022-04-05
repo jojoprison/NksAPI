@@ -417,10 +417,11 @@ def product_filter_all_api(request):
                         if field_name == 'features':
                             print(values)
 
-                        select = {'product_prop': field.name,
-                                  'name': field.verbose_name,
-                                  'values': values}
-                        select_list.append(select)
+                        if values:
+                            select = {'product_prop': field.name,
+                                      'name': field.verbose_name,
+                                      'values': values}
+                            select_list.append(select)
 
         # print(select_list)
 
