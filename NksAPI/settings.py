@@ -29,7 +29,8 @@ ALLOWED_HOSTS = [
     '185.219.43.45',
     'nksgroup33.ru',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
+    'jsliq',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
