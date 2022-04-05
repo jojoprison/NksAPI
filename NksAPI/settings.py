@@ -46,9 +46,9 @@ CORS_ORIGIN_ALLOW_ALL = True
 # ]
 
 CORS_ORIGIN_WHITELIST = [
-    'http://185.219.43.45',
+    'https://185.219.43.45',
     "http://127.0.0.1",
-    'http://nksgroup33.ru:8000'
+    'https://nksgroup33.ru',
 ]
 
 # CORS_ORIGIN_WHITELIST = [
