@@ -3,7 +3,7 @@ from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from .models import Product, Type, Table
+from .models import Product, Type, Table, Chair, Drawer, Stand, Rack, Accessory
 
 
 class ProductsPagination(PageNumberPagination):
@@ -74,6 +74,36 @@ class ProductFilter(filters.FilterSet):
 class TableFilter(filters.FilterSet):
     class Meta:
         model = Table
+        fields = ['series', 'subtype']
+
+
+class ChairFilter(filters.FilterSet):
+    class Meta:
+        model = Chair
+        fields = ['series', 'subtype']
+
+
+class DrawerFilter(filters.FilterSet):
+    class Meta:
+        model = Drawer
+        fields = ['series', 'subtype']
+
+
+class StandFilter(filters.FilterSet):
+    class Meta:
+        model = Stand
+        fields = ['series', 'subtype']
+
+
+class RackFilter(filters.FilterSet):
+    class Meta:
+        model = Rack
+        fields = ['series', 'subtype']
+
+
+class AccessoryFilter(filters.FilterSet):
+    class Meta:
+        model = Accessory
         fields = ['series', 'subtype']
 
 

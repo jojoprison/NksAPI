@@ -13,18 +13,21 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from rest_framework.response import Response
 
-from CatalogueApp.models import Product, Type, Client, Table
+from CatalogueApp.models import Product, Type, Client, Table, Chair, Drawer, Stand, Rack, Accessory
 from CatalogueApp.serializers import (
     TypeDetailSerializer,
     SubtypeDetailSerializer,
     OrderSerializer,
-    ClientSerializer, ProductListSerializer, ProductDetailSerializer, TableListSerializer, TableDetailSerializer
+    ClientSerializer, ProductListSerializer, ProductDetailSerializer, TableListSerializer, TableDetailSerializer,
+    ChairListSerializer, ChairDetailSerializer, DrawerListSerializer, DrawerDetailSerializer, StandDetailSerializer,
+    StandListSerializer, RackListSerializer, RackDetailSerializer, AccessoryListSerializer, AccessoryDetailSerializer
 )
 
 from django.core.files.storage import default_storage
 
 
-from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter
+from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
+    StandFilter, RackFilter, AccessoryFilter
 
 
 # ModelViewSet
@@ -106,6 +109,201 @@ class TableViewSet(viewsets.ReadOnlyModelViewSet):
     # def type(self, request, pk=None):
     #     type = Type.objects.get(pk=pk)
     #     return Response({'type_id': type.id})
+
+
+class ChairViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ChairFilter
+    pagination_class = ProductsPagination
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'subtype':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                chair = Chair.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                chair = Chair.objects.all()
+
+            return chair
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Chair.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ChairListSerializer
+        elif self.action == 'retrieve':
+            return ChairDetailSerializer
+
+
+class DrawerViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = DrawerFilter
+    pagination_class = ProductsPagination
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'subtype':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                drawer = Drawer.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                drawer = Drawer.objects.all()
+
+            return drawer
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Chair.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return DrawerListSerializer
+        elif self.action == 'retrieve':
+            return DrawerDetailSerializer
+
+
+class StandViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = StandFilter
+    pagination_class = ProductsPagination
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'subtype':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                stand = Stand.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                stand = Stand.objects.all()
+
+            return stand
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Stand.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return StandListSerializer
+        elif self.action == 'retrieve':
+            return StandDetailSerializer
+
+
+class RackViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RackFilter
+    pagination_class = ProductsPagination
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'subtype':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                rack = Rack.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                rack = Rack.objects.all()
+
+            return rack
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Rack.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return RackListSerializer
+        elif self.action == 'retrieve':
+            return RackDetailSerializer
+
+
+class AccessoryViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = AccessoryFilter
+    pagination_class = ProductsPagination
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'subtype':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                accessory = Accessory.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                accessory = Accessory.objects.all()
+
+            return accessory
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Accessory.objects.filter(pk=pk)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return AccessoryListSerializer
+        elif self.action == 'retrieve':
+            return AccessoryDetailSerializer
 
 
 @csrf_exempt

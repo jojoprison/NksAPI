@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from CatalogueApp.models import Product, Type, Client, Order, Subtype, Table
+from CatalogueApp.models import Product, Type, Client, Order, Subtype, Table, Chair, Drawer, Stand, Rack, Accessory
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -115,6 +115,141 @@ class TableDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Table
+        fields = '__all__'
+        # TODO подумать что еще добавить в read-only
+        read_only_fields = ('time_create', 'time_update')
+
+
+class ChairListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chair
+        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+                  'width', 'height', 'depth', 'description', 'execution_material',
+                  'purpose', 'oven_material', 'tabletop_material', 'door_layout',
+                  'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
+                  'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                  'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
+                  # bool
+                  'is_published', 'mains_switch', 'electrical_outlets', 'water',
+                  'gas', 'lamp', 'titration_panel',
+                  # доделать их
+                  'mods')
+
+
+class ChairDetailSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
+    class Meta:
+        model = Chair
+        fields = '__all__'
+        # TODO подумать что еще добавить в read-only
+        read_only_fields = ('time_create', 'time_update')
+
+
+class DrawerListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Chair
+        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+                  'width', 'height', 'depth', 'description', 'execution_material',
+                  'purpose', 'oven_material', 'tabletop_material', 'door_layout',
+                  'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
+                  'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                  'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
+                  # bool
+                  'is_published', 'mains_switch', 'electrical_outlets', 'water',
+                  'gas', 'lamp', 'titration_panel',
+                  # доделать их
+                  'mods')
+
+
+class DrawerDetailSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
+    class Meta:
+        model = Drawer
+        fields = '__all__'
+        # TODO подумать что еще добавить в read-only
+        read_only_fields = ('time_create', 'time_update')
+
+
+class StandListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stand
+        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+                  'width', 'height', 'depth', 'description', 'execution_material',
+                  'purpose', 'oven_material', 'tabletop_material', 'door_layout',
+                  'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
+                  'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                  'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
+                  # bool
+                  'is_published', 'mains_switch', 'electrical_outlets', 'water',
+                  'gas', 'lamp', 'titration_panel',
+                  # доделать их
+                  'mods')
+
+
+class StandDetailSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
+    class Meta:
+        model = Stand
+        fields = '__all__'
+        # TODO подумать что еще добавить в read-only
+        read_only_fields = ('time_create', 'time_update')
+
+
+class RackListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rack
+        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+                  'width', 'height', 'depth', 'description', 'execution_material',
+                  'purpose', 'oven_material', 'tabletop_material', 'door_layout',
+                  'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
+                  'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                  'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
+                  # bool
+                  'is_published', 'mains_switch', 'electrical_outlets', 'water',
+                  'gas', 'lamp', 'titration_panel',
+                  # доделать их
+                  'mods')
+
+
+class RackDetailSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
+    class Meta:
+        model = Rack
+        fields = '__all__'
+        # TODO подумать что еще добавить в read-only
+        read_only_fields = ('time_create', 'time_update')
+
+
+class AccessoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Accessory
+        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+                  'width', 'height', 'depth', 'description', 'execution_material',
+                  'purpose', 'oven_material', 'tabletop_material', 'door_layout',
+                  'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
+                  'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                  'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
+                  # bool
+                  'is_published', 'mains_switch', 'electrical_outlets', 'water',
+                  'gas', 'lamp', 'titration_panel',
+                  # доделать их
+                  'mods')
+
+
+class AccessoryDetailSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
+    class Meta:
+        model = Accessory
         fields = '__all__'
         # TODO подумать что еще добавить в read-only
         read_only_fields = ('time_create', 'time_update')
