@@ -13,44 +13,93 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from rest_framework.response import Response
 
-from CatalogueApp.models import Product, Type, Client
+from CatalogueApp.models import Product, Type, Client, Table
 from CatalogueApp.serializers import (
     TypeDetailSerializer,
     SubtypeDetailSerializer,
     OrderSerializer,
-    ClientSerializer, ProductListSerializer, ProductDetailSerializer
+    ClientSerializer, ProductListSerializer, ProductDetailSerializer, TableListSerializer, TableDetailSerializer
 )
 
 from django.core.files.storage import default_storage
 
 
-from .service import ProductFilter, get_client_ip, PaginationProducts
+from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter
 
 
 # ModelViewSet
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
-    pagination_class = PaginationProducts
+    pagination_class = ProductsPagination
 
     def get_queryset(self):
-        # longitude = self.request.query_params.get('longitude')
-        # latitude = self.request.query_params.get('latitude')
         # radius = self.request.query_params.get('radius')
 
         pk = self.kwargs.get('pk')
 
         if not pk:
-            return Product.objects.all()
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'type':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                products = Product.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                products = Product.objects.all()
+
+            return products
 
         # queryset должен возвращать список, а фильтр тоже всегда возвращает список
         return Product.objects.filter(pk=pk)
 
+
+class TableViewSet(viewsets.ReadOnlyModelViewSet):
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TableFilter
+    pagination_class = ProductsPagination
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+
+        if not pk:
+            filter_kwargs = []
+
+            for item in self.request.query_params.items():
+                # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+                if not item[0] == 'page':
+                    if item[0] == 'subtype':
+                        filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+                    else:
+                        filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+            # TODO выводим все (не только опубликованные)
+            # filter_kwargs.append(Q(**{'is_published': True}))
+
+            if filter_kwargs:
+                tables = Table.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+            else:
+                tables = Table.objects.all()
+
+            return tables
+
+        # queryset должен возвращать список, а фильтр тоже всегда возвращает список
+        return Table.objects.filter(pk=pk)
+
     def get_serializer_class(self):
         if self.action == 'list':
-            return ProductListSerializer
+            return TableListSerializer
         elif self.action == 'retrieve':
-            return ProductDetailSerializer
+            return TableDetailSerializer
 
     # добавляет новый маршрут во view_set
     # @action(methods=['get'], detail=True)

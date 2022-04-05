@@ -6,7 +6,7 @@ from CatalogueApp import views
 from django.conf.urls.static import static
 from django.conf import settings
 
-from CatalogueApp.views import ProductViewSet
+from CatalogueApp.views import ProductViewSet, TableViewSet
 
 urlpatterns = [
     # url(r'^products$', views.product_api),
@@ -27,8 +27,8 @@ urlpatterns = [
 
     path('products/', ProductViewSet.as_view({'get': 'list'})),
     path('products/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('tables/', ProductViewSet.as_view({'get': 'list'})),
-    path('tables/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
+    path('tables/', TableViewSet.as_view({'get': 'list'})),
+    path('tables/<int:pk>/', TableViewSet.as_view({'get': 'retrieve'})),
     # шкафы пока не делаем
     # path('cabinets/', ProductViewSet.as_view({'get': 'list'})),
     # path('cabinets/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),

@@ -1,5 +1,18 @@
 from rest_framework import serializers
-from CatalogueApp.models import Product, Type, Client, Order, Subtype
+from CatalogueApp.models import Product, Type, Client, Order, Subtype, Table
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ('name', 'email', 'phone')
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    # client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+    class Meta:
+        model = Order
+        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price', 'delivery', 'products')
 
 
 class TypeDetailSerializer(serializers.ModelSerializer):
@@ -52,6 +65,7 @@ class ProductListSerializer(serializers.ModelSerializer):
                   'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
                   'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
                   'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
                   # bool
                   'is_published', 'mains_switch', 'electrical_outlets', 'water',
                   'gas', 'lamp', 'titration_panel',
@@ -79,14 +93,28 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         #           'slug')
 
 
-class ClientSerializer(serializers.ModelSerializer):
+class TableListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Client
-        fields = ('name', 'email', 'phone')
+        model = Table
+        fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
+                  'width', 'height', 'depth', 'description', 'execution_material',
+                  'purpose', 'oven_material', 'tabletop_material', 'door_layout',
+                  'door_quantity', 'door_material', 'boxes', 'feature', 'disposition',
+                  'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                  'sink_material', 'sink_location', 'sink_count', 'complete_with_drawers',
+                  'photo_file_name',
+                  # bool
+                  'is_published', 'mains_switch', 'electrical_outlets', 'water',
+                  'gas', 'lamp', 'titration_panel',
+                  # доделать их
+                  'mods')
 
 
-class OrderSerializer(serializers.ModelSerializer):
-    # client = serializers.PrimaryKeyRelatedField(queryset=Client.objects.all())
+class TableDetailSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
     class Meta:
-        model = Order
-        fields = ('name', 'phone', 'email', 'city', 'commentary', 'price', 'delivery', 'products')
+        model = Table
+        fields = '__all__'
+        # TODO подумать что еще добавить в read-only
+        read_only_fields = ('time_create', 'time_update')
