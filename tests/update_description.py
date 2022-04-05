@@ -24,7 +24,7 @@ class UpdateDescriptions:
         conn = self.get_connection()
 
         cursor = conn.cursor()
-
+    
         cursor.execute('UPDATE CatalogueApp_product SET description = ? WHERE id = ?',
                        (description, product_id))
 
@@ -37,7 +37,7 @@ class UpdateDescriptions:
         conn = self.get_connection()
 
         cursor = conn.cursor()
-
+    
         cursor.execute('SELECT description FROM CatalogueApp_product WHERE id = ?',
                        (product_id,))
         photo_name = cursor.fetchone()
@@ -68,6 +68,7 @@ class UpdateDescriptions:
         for product_id, desc in products_description:
             new_desc = self.delete_starting(desc)
             print(new_desc)
+
             self.update_description(product_id, new_desc)
 
 
