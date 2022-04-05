@@ -113,7 +113,7 @@ def product_filter_all_api(request):
         published_products = Product.objects.all()
         print(len(published_products))
 
-        photo_list = list(set(published_products.values_list('photo_file_name', flat=True)))
+        # photo_list = list(set(published_products.values_list('photo_file_name', flat=True)))
         # TODO не сортируется потому что у некоторых товаров ссылки на картинки вместо фоток
         # photo_list.sort()
         # print(len(photo_list))
@@ -129,7 +129,7 @@ def product_filter_all_api(request):
         for field in fields:
             # queries.append(Q(**{field.name: SEARCH_TERM}))
             excluded = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published', 'id',
-                        'title', 'type', 'subtype', 'price', 'mods']
+                        'title', 'subtype', 'price', 'mods']
             # json_fields = ['features', 'door_layout', 'shelf_material', 'complete_with_drawers', 'mods', ]
 
             field_name = field.name
@@ -141,6 +141,7 @@ def product_filter_all_api(request):
                     excludes = None
 
                     if isinstance(field, JSONField):
+                        # TODO не доделал
                         empty_q = Q(**{f'{field_name}__exact': '[]'})
                         excludes = (excludes and (excludes | empty_q)) or empty_q
 
@@ -239,13 +240,13 @@ def product_filter_api(request):
 def type_api(request, type_id=0):
     if request.method == 'GET':
         types = Type.objects.all()
-        type_serializer = TypeSerializer(types, many=True)
+        type_serializer = TypeDetailSerializer(types, many=True)
 
         return JsonResponse(type_serializer.data, safe=False)
 
     elif request.method == 'POST':
         type_data = JSONParser().parse(request)
-        type_serializer = TypeSerializer(data=type_data)
+        type_serializer = TypeDetailSerializer(data=type_data)
 
         if type_serializer.is_valid():
             type_serializer.save()
@@ -258,7 +259,7 @@ def type_api(request, type_id=0):
         type_data = JSONParser().parse(request)
 
         type_ = Type.objects.get(id=type_data['id'])
-        type_serializer = TypeSerializer(type_, data=type_data)
+        type_serializer = TypeDetailSerializer(type_, data=type_data)
 
         if type_serializer.is_valid():
             type_serializer.save()
