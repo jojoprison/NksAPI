@@ -3,17 +3,18 @@ from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from .models import Product, Type
+from .models import Product, Type, Table, Chair, Drawer, Stand, Rack, Accessory
 
 
-class PaginationProducts(PageNumberPagination):
+class ProductsPagination(PageNumberPagination):
     page_size = 12
-    max_page_size = 50
+    # max_page_size = 50
 
     def get_paginated_response(self, data):
         return Response({
-            'count': self.page.paginator.count,
+            'product_count': self.page.paginator.count,
             'per_page': self.page_size,
+            'page_count': self.page.paginator.num_pages,
             'links': {
                 'next': self.get_next_link(),
                 'previous': self.get_previous_link()
@@ -68,6 +69,42 @@ class ProductFilter(filters.FilterSet):
     class Meta:
         model = Product
         fields = ['type', 'series', 'subtype']
+
+
+class TableFilter(filters.FilterSet):
+    class Meta:
+        model = Table
+        fields = ['series', 'subtype']
+
+
+class ChairFilter(filters.FilterSet):
+    class Meta:
+        model = Chair
+        fields = ['series', 'subtype']
+
+
+class DrawerFilter(filters.FilterSet):
+    class Meta:
+        model = Drawer
+        fields = ['series', 'subtype']
+
+
+class StandFilter(filters.FilterSet):
+    class Meta:
+        model = Stand
+        fields = ['series', 'subtype']
+
+
+class RackFilter(filters.FilterSet):
+    class Meta:
+        model = Rack
+        fields = ['series', 'subtype']
+
+
+class AccessoryFilter(filters.FilterSet):
+    class Meta:
+        model = Accessory
+        fields = ['series', 'subtype']
 
 
 def get_client_ip(request):

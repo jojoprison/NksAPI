@@ -4,6 +4,7 @@ from pathlib import Path
 
 from common.utils.paths import get_project_root_path
 
+
 class UpdateDescriptions:
     product_photos_dir = Path(f'{get_project_root_path()}/media/products/')
 
@@ -19,26 +20,11 @@ class UpdateDescriptions:
         if connection:
             connection.close()
 
-
-    def get_description(self, product_id):
-        conn = self.get_connection()
-
-        cursor = conn.cursor()
-
-        cursor.execute('SELECT description FROM CatalogueApp_product WHERE id = ?',
-                       (product_id,))
-        description = cursor.fetchone()[0]
-
-        self.close_connection(conn)
-
-        return description
-
-
     def update_description(self, product_id, description):
         conn = self.get_connection()
 
         cursor = conn.cursor()
-
+    
         cursor.execute('UPDATE CatalogueApp_product SET description = ? WHERE id = ?',
                        (description, product_id))
 
@@ -47,30 +33,45 @@ class UpdateDescriptions:
 
         return description
 
+    def get_description(self, product_id):
+        conn = self.get_connection()
+
+        cursor = conn.cursor()
+    
+        cursor.execute('SELECT description FROM CatalogueApp_product WHERE id = ?',
+                       (product_id,))
+        photo_name = cursor.fetchone()
+
+        self.close_connection(conn)
+
+        return True if photo_name else False
 
     def get_products_description(self):
         conn = self.get_connection()
 
         cursor = conn.cursor()
+
         cursor.execute('SELECT id, description FROM CatalogueApp_product')
-        product_description = cursor.fetchall()
+        products_description = cursor.fetchall()
 
         self.close_connection(conn)
 
-        return product_description
+        return products_description
 
     def delete_starting(self, description):
         new_desc = description.replace('Описание товара:', '')
         return new_desc
 
     def update_desc_all(self):
-        get_products_description_ = self.get_products_description()
+        products_description = self.get_products_description()
 
-        for product_id, desc in get_products_description_:
+        for product_id, desc in products_description:
             new_desc = self.delete_starting(desc)
+            print(new_desc)
+
             self.update_description(product_id, new_desc)
 
 
 if __name__ == '__main__':
     ud = UpdateDescriptions()
-    get_products_description_ = ud.update_desc_all()
+    ud.update_desc_all()

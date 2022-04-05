@@ -6,7 +6,8 @@ from CatalogueApp import views
 from django.conf.urls.static import static
 from django.conf import settings
 
-from CatalogueApp.views import ProductViewSet
+from CatalogueApp.views import ProductViewSet, TableViewSet, ChairViewSet, DrawerViewSet, StandViewSet, RackViewSet, \
+    AccessoryViewSet
 
 urlpatterns = [
     # url(r'^products$', views.product_api),
@@ -27,22 +28,21 @@ urlpatterns = [
 
     path('products/', ProductViewSet.as_view({'get': 'list'})),
     path('products/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('tables/', ProductViewSet.as_view({'get': 'list'})),
-    path('tables/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
+    path('tables/', TableViewSet.as_view({'get': 'list'})),
+    path('tables/<int:pk>/', TableViewSet.as_view({'get': 'retrieve'})),
+    path('chairs/', ChairViewSet.as_view({'get': 'list'})),
+    path('chairs/<int:pk>/', ChairViewSet.as_view({'get': 'retrieve'})),
+    path('drawers/', DrawerViewSet.as_view({'get': 'list'})),
+    path('drawers/<int:pk>/', DrawerViewSet.as_view({'get': 'retrieve'})),
+    path('stands/', StandViewSet.as_view({'get': 'list'})),
+    path('stands/<int:pk>/', StandViewSet.as_view({'get': 'retrieve'})),
+    path('racks/', RackViewSet.as_view({'get': 'list'})),
+    path('racks/<int:pk>/', RackViewSet.as_view({'get': 'retrieve'})),
+    path('accessories/', AccessoryViewSet.as_view({'get': 'list'})),
+    path('accessories/<int:pk>/', AccessoryViewSet.as_view({'get': 'retrieve'})),
     # шкафы пока не делаем
     # path('cabinets/', ProductViewSet.as_view({'get': 'list'})),
     # path('cabinets/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('racks/', ProductViewSet.as_view({'get': 'list'})),
-    path('racks/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('chairs/', ProductViewSet.as_view({'get': 'list'})),
-    path('chairs/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('drawers/', ProductViewSet.as_view({'get': 'list'})),
-    path('chairs/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('stands/', ProductViewSet.as_view({'get': 'list'})),
-    path('stands/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-    path('accessories/', ProductViewSet.as_view({'get': 'list'})),
-    path('accessories/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
-
     # path('types$/', ProductViewSet.as_view({'get': 'list'})),
     # path('types/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
     # path('subtypes/', ProductViewSet.as_view({'get': 'list'})),

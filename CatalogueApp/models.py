@@ -1,5 +1,6 @@
 import json
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 
 
@@ -46,22 +47,20 @@ class Product(models.Model):
                                                      null=True)
     # шкафы, у тумб тот же, что и материал исполнения
     door_material = models.CharField(max_length=50, verbose_name='Материал дверей', null=True)
-    # TODO мб для тумб сделать материал дверей как материал исполнения
     # [1, 2, 3, 4]
-    boxes = models.PositiveIntegerField(verbose_name='Ящики', null=True)
-    # TODO будет массивом для всякой непопулярной херни
-    feature = models.CharField(max_length=50, verbose_name='Особенность', null=True)
+    boxes = models.PositiveIntegerField(verbose_name='Количество ящиков', null=True)
+    # массивом для всякой непопулярной херни
+    # feature = models.JSONField(max_length=100, verbose_name='Особенности', default=list, null=True)
+    feature = models.CharField(max_length=50, verbose_name='Особенности', null=True)
     # СТОЛЫ-МОЙКИ
     disposition = models.CharField(max_length=50, verbose_name='Расположение', null=True)
     # СТОЛЫ 2
-    # TODO мб убрать None отсутствует, хз как по логике это работает, надо посмотреть
-    TECHNOLOGY_RACK = (
-        (None, 'Отсутствует'),
-        ('built_in', 'В комплекте'),
-        ('separately', 'Отдельным заказом'),
-    )
-    technology_rack = models.CharField(choices=TECHNOLOGY_RACK, default=None, verbose_name='Технологическая стойка',
-                                       null=True, max_length=30)
+    # TECHNOLOGY_RACK = (
+    #     ('Отсутствует', None),
+    #     ('В комплекте', 'built_in'),
+    #     ('Отдельным заказом', 'separately'),
+    # )
+    technology_rack = models.CharField(max_length=30, null=True, default=None, verbose_name='Технологическая стойка')
     # ШКАФЫ 2 (Эльвира сказала, пока не юзаем их), СТЕЛЛАЖИ 2
     shelf_material = models.CharField(max_length=50, verbose_name='Материал полок', null=True)
     # КОЛ-ВО ПОЛОК идут еще в "ШКАФЫ", "ТУМБЫ"
@@ -82,14 +81,11 @@ class Product(models.Model):
     # СТОЙКИ 1
     titration_panel = models.BooleanField(verbose_name='Табло титрования', null=True)
     # ТОЛЬКО СТОЛЫ 1
-    # TODO сделать миграцию
     complete_with_drawers = models.CharField(max_length=50, verbose_name='Комплектуется с типами тумб',
                                              null=True)
 
     # модификации с Лабстола, там интересно сделано переключение между вариантами
     mods = models.CharField(max_length=1000, verbose_name='Модификации', null=True)
-    # заглушка для объектов, не имеющих фотку
-    is_correct_photo = models.BooleanField(verbose_name='Корректно ли фото', default=False)
 
     # TODO дополнить базу этим, когда будет время
     # доп оборудование(ток для одной/растений)
