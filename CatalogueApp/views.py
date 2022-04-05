@@ -65,6 +65,12 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         # queryset должен возвращать список, а фильтр тоже всегда возвращает список
         return Product.objects.filter(pk=pk)
 
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProductListSerializer
+        elif self.action == 'retrieve':
+            return ProductDetailSerializer
+
 
 class TableViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)

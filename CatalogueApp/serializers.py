@@ -94,6 +94,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
 
 class TableListSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
     class Meta:
         model = Table
         fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
@@ -121,6 +122,7 @@ class TableDetailSerializer(serializers.ModelSerializer):
 
 
 class ChairListSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
     class Meta:
         model = Chair
         fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
@@ -148,6 +150,7 @@ class ChairDetailSerializer(serializers.ModelSerializer):
 
 
 class DrawerListSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
     class Meta:
         model = Chair
         fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
@@ -175,6 +178,7 @@ class DrawerDetailSerializer(serializers.ModelSerializer):
 
 
 class StandListSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
     class Meta:
         model = Stand
         fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
@@ -202,6 +206,8 @@ class StandDetailSerializer(serializers.ModelSerializer):
 
 
 class RackListSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
     class Meta:
         model = Rack
         fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
@@ -229,6 +235,8 @@ class RackDetailSerializer(serializers.ModelSerializer):
 
 
 class AccessoryListSerializer(serializers.ModelSerializer):
+    subtype = ReturnTitleSerializer(read_only=True)
+
     class Meta:
         model = Accessory
         fields = ('id', 'title', 'subtype', 'series', 'article', 'price',
