@@ -49,6 +49,8 @@ CORS_ORIGIN_WHITELIST = [
     'https://185.219.43.45',
     "http://127.0.0.1",
     'https://nksgroup33.ru',
+    'https://185.219.43.45:5000',
+    'https://nksgroup33.ru:5000',
 ]
 
 # CORS_ORIGIN_WHITELIST = [
