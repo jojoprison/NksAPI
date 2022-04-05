@@ -49,8 +49,8 @@ CORS_ORIGIN_WHITELIST = [
     'https://185.219.43.45',
     "http://127.0.0.1",
     'https://nksgroup33.ru',
-    'https://185.219.43.45:5000',
-    'https://nksgroup33.ru:5000',
+    # 'https://185.219.43.45:5000',
+    # 'https://nksgroup33.ru:5000',
 ]
 
 # CORS_ORIGIN_WHITELIST = [
@@ -287,3 +287,13 @@ REST_FRAMEWORK = {
 # EMAIL_HOST_USER = '22222226@gmail.com'
 # EMAIL_HOST_PASSWORD = '11111'
 # EMAIL_PORT = 587
+
+# CORS_REPLACE_HTTPS_REFERER = False
+# HOST_SCHEME = "http://"
+# SECURE_PROXY_SSL_HEADER = None
+SECURE_SSL_REDIRECT = False
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = False
+# SECURE_HSTS_SECONDS = None
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+# SECURE_FRAME_DENY = False
