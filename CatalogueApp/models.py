@@ -277,7 +277,7 @@ class Order(models.Model):
                                   blank=True)
     price = models.IntegerField(verbose_name='Сумма заказа')
     delivery = models.CharField(max_length=50, default='Самовывоз', verbose_name='Вариант доставки')
-    products = models.CharField(max_length=300, verbose_name='Товары')
+    products = models.CharField(max_length=10000, verbose_name='Товары')
 
     def __str__(self):
         return f'Заказ №{self.id}; тел. {self.phone} {self.name}'

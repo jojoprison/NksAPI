@@ -13,7 +13,7 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from rest_framework.response import Response
 
-from CatalogueApp.models import Product, Type, Client, Table, Chair, Drawer, Stand, Rack, Accessory
+from CatalogueApp.models import Product, Type, Client, Table, Chair, Drawer, Stand, Rack, Accessory, Order
 from CatalogueApp.serializers import (
     TypeDetailSerializer,
     SubtypeDetailSerializer,
@@ -25,7 +25,7 @@ from CatalogueApp.serializers import (
 
 from django.core.files.storage import default_storage
 
-
+from common.utils.whatsapp_notifications import WhatsAppNotificator
 from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
     StandFilter, RackFilter, AccessoryFilter
 
@@ -551,15 +551,30 @@ def order_api(request):
 
         for item in items:
             item_id = item.get('id')
+            title = item.get('title')
             item_quantity = item.get('quantity')
             item_price = item.get('price')
 
-            product = {'id': item_id, 'quantity': item_quantity, 'price': item_price}
+
+            # 23:04 пример СМС
+            # product = {'ID товара': item_id,
+            #            'Название товара': title,
+            #            'Количество': item_quantity,
+            #            'Цена': item_price}
+
+            # 23:23 пример СМС
+            product = (f' ID товара: {item_id},'
+                       f' Название товара: {title},'
+                       f' Количество: {item_quantity},'
+                       f' Цена: {item_price}')
             products_db.append(product)
 
         order_data.pop('items')
+        # print(products_db)
         products_db_str = json.dumps(products_db)
         order_data['products'] = products_db_str
+
+        # print(products_db_str)
 
         # TODO сделать парсер чтоб приводить телефон к общему виду
         # order_client_phone = order_data.pop('phone')
@@ -571,11 +586,27 @@ def order_api(request):
         #     print(Client.objects.filter(Q(phone=order_client_phone) | Q(email=order_client_email)).query)
         #
         # order_data['client'] = client.id
+        # order_name = order_data['name']
+
 
         order_serializer = OrderSerializer(data=order_data)
 
+
         if order_serializer.is_valid():
-            order_serializer.save()
+            saved_order = order_serializer.save()
+
+            delivery = order_data['delivery']
+            total_price = order_data['price']
+            client = order_data['name']
+            number_phone = order_data['phone']
+            # products = order_data['products']
+
+
+            order_message = (f'Заказ №{saved_order.id}.\nФИО клиента: {client}.\nТелефон для связи: {number_phone}.\n'
+                                               f'Сумма заказа: {total_price} ₽.\nСпособ доставки: {delivery}.\n'
+                                               f'Товары: {products_db}')
+
+            WhatsAppNotificator().send_message(order_message)
 
             return JsonResponse('Заказ оформлен', safe=False)
 
