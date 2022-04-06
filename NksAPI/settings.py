@@ -58,7 +58,7 @@ CORS_ORIGIN_WHITELIST = [
 #     "http://127.0.0.1:8000"
 # ]
 
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -249,11 +249,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # TODO разобраться
-AUTHENTICATION_BACKENDS = (
+# AUTHENTICATION_BACKENDS = (
     # 'social_core.backends.vk.VKOAuth2',
     # 'rest_framework_social_oauth2.backends.DjangoOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
+    # 'django.contrib.auth.backends.ModelBackend',
+# )
 
 # TODO разобраться
 JAZZMIN_SETTINGS = {
@@ -262,7 +262,6 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"app": "books"},
     ],
-    "show_sidebar": True,
     # "language_chooser": True,
 }
 
@@ -302,7 +301,7 @@ REST_FRAMEWORK = {
 # SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 # SECURE_FRAME_DENY = False
 # ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
