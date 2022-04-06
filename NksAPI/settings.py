@@ -29,7 +29,8 @@ ALLOWED_HOSTS = [
     '185.219.43.45',
     'nksgroup33.ru',
     'localhost',
-    '127.0.0.1'
+    '127.0.0.1',
+    'jsliq',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -45,9 +46,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 # ]
 
 CORS_ORIGIN_WHITELIST = [
-    'http://185.219.43.45',
+    'https://185.219.43.45',
     "http://127.0.0.1",
-    'http://nksgroup33.ru:8000'
+    'https://nksgroup33.ru',
+    # 'https://185.219.43.45:5000',
+    # 'https://nksgroup33.ru:5000',
 ]
 
 # CORS_ORIGIN_WHITELIST = [
@@ -68,6 +71,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'sslserver',
     # 'rest_framework.authtoken',
     # 'ckeditor',
     # 'ckeditor_uploader',
@@ -245,11 +249,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # TODO разобраться
-AUTHENTICATION_BACKENDS = (
+# AUTHENTICATION_BACKENDS = (
     # 'social_core.backends.vk.VKOAuth2',
     # 'rest_framework_social_oauth2.backends.DjangoOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
+    # 'django.contrib.auth.backends.ModelBackend',
+# )
 
 # TODO разобраться
 JAZZMIN_SETTINGS = {
@@ -258,7 +262,6 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"app": "books"},
     ],
-    "show_sidebar": True,
     # "language_chooser": True,
 }
 
@@ -284,3 +287,21 @@ REST_FRAMEWORK = {
 # EMAIL_HOST_USER = '22222226@gmail.com'
 # EMAIL_HOST_PASSWORD = '11111'
 # EMAIL_PORT = 587
+
+# CORS_REPLACE_HTTPS_REFERER = False
+# HOST_SCHEME = "https://"
+# SECURE_PROXY_SSL_HEADER = None
+# SECURE_SSL_REDIRECT = False
+# SECURE_CONTENT_TYPE_NOSNIFF = False
+# SECURE_BROWSER_XSS_FILTER = False
+# SESSION_COOKIE_SECURE = False
+# CSRF_COOKIE_SECURE = False
+# X_FRAME_OPTIONS = 'DENY'
+# SECURE_HSTS_SECONDS = None
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+# SECURE_FRAME_DENY = False
+# ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
