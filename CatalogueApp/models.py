@@ -243,7 +243,7 @@ class AccessoryManager(models.Manager):
 
 
 class Accessory(Product):
-    objects = DrawerManager()
+    objects = AccessoryManager()
 
     class Meta:
         proxy = True

@@ -16,8 +16,20 @@ urlpatterns = [
     # url(r'^product/([0-9]+)$', views.product_detail_api),
     #
     # url(r'^products/filtersAll$', views.product_filter_all_api),
-    path('products/filtersAll', views.product_filter_all_api),
-    path('products/filter', views.product_filter_api),
+    path('products/filtersAll', views.products_fields_values),
+    path('products/filter', views.products_filtered),
+    path('tables/filtersAll', views.tables_fields_values),
+    path('tables/filter', views.tables_filtered),
+    path('chairs/filtersAll', views.chairs_fields_values),
+    path('chairs/filter', views.chairs_filtered),
+    path('drawers/filtersAll', views.drawers_fields_values),
+    path('drawers/filter', views.drawers_filtered),
+    path('stands/filtersAll', views.stands_fields_values),
+    path('stands/filter', views.stands_filtered),
+    path('racks/filtersAll', views.racks_fields_values),
+    path('racks/filter', views.racks_filtered),
+    path('accessories/filtersAll', views.accessories_fields_values),
+    path('accessories/filter', views.accessories_filtered),
 
     # url(r'^client$', views.client_api),
     #

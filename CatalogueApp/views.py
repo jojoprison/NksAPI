@@ -351,6 +351,7 @@ def product_api(request, product_id=0):
         return JsonResponse('Product Deleted', safe=False)
 
 
+# TODO избавиться!
 @csrf_exempt
 def product_detail_api(request, product_id):
     print(product_id)
@@ -361,7 +362,110 @@ def product_detail_api(request, product_id):
         return JsonResponse(product_serializer.data, safe=False)
 
 
-def product_filter_all_api(request):
+# общий метод получения всех возможных значений полей модельки
+def get_filters_values(model_class, fields, excluded_fields):
+    select_list = []
+    checkbox_list = []
+
+    for field in fields:
+        # queries.append(Q(**{field.name: SEARCH_TERM}))
+        # json_fields = ['features', 'door_layout', 'shelf_material', 'complete_with_drawers', 'mods', ]
+
+        field_name = field.name
+
+        if field_name not in excluded_fields:
+            if isinstance(field, BooleanField):
+                checkbox_list.append(field.name)
+            else:
+                excludes = None
+
+                if isinstance(field, JSONField):
+                    # TODO не доделал
+                    empty_q = Q(**{f'{field_name}__exact': '[]'})
+                    excludes = (excludes and (excludes | empty_q)) or empty_q
+
+                    # TODO на фронте делать мультиселект для таких полей
+                else:
+                    excludes = None
+
+                    null_q = Q(**{f'{field_name}__isnull': True})
+                    # makes sure excludes is set properly
+                    excludes = (excludes and (excludes | null_q)) or null_q
+                    if isinstance(field, CharField):
+                        empty_q = Q(**{f'{field_name}__exact': ''})
+                        excludes = (excludes and (excludes | empty_q)) or empty_q
+
+                    pre_excluded_values = model_class.objects.order_by(field_name).values_list(field_name, flat=True) \
+                        .distinct()
+                    values_minus_excluded = pre_excluded_values.exclude(excludes)
+                    values = list(values_minus_excluded)
+
+                    if field_name == 'features':
+                        print(values)
+
+                    if values:
+                        select = {'product_prop': field.name,
+                                  'name': field.verbose_name,
+                                  'values': values}
+                        select_list.append(select)
+
+    # print(select_list)
+
+    # qs = Q()
+    # for query in queries:
+    #     qs = qs | query
+    #
+    # Product.objects.filter(qs)
+
+    # width_list = list(set(published_products.exclude(width=None).values_list('width', flat=True)))
+    # width_list.sort()
+    #
+    # height_list = list(set(published_products.exclude(height=None).values_list('height', flat=True)))
+    # height_list.sort()
+    #
+    #
+    # type_list = list(set(published_products.values_list('type', flat=True)))
+    # type_list.sort()
+    # print(type_list)
+    # print(res)
+
+    filter_variant_list = {
+        'select': select_list,
+        'checkbox': checkbox_list
+    }
+
+    # print(filter_variant_list)
+
+    return filter_variant_list
+
+
+def get_filtered_query_set(model_class, req_query_params):
+    filter_kwargs = []
+
+    # qs = Q()
+    # for query in queries:
+    #     qs = qs | query
+
+    for item in req_query_params:
+        # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
+        if item[0] == 'type':
+            filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
+        else:
+            filter_kwargs.append(Q(**{item[0]: item[1]}))
+
+    # TODO выводим все (не только опубликованные)
+    # filter_kwargs.append(Q(**{'is_published': True}))
+    # print(filter_kwargs)
+
+    if filter_kwargs:
+        filtered_query_set = model_class.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
+    else:
+        filtered_query_set = model_class.objects.all()
+
+    return filtered_query_set
+
+
+def products_fields_values(request):
     if request.method == 'GET':
         published_products = Product.objects.all()
         print(len(published_products))
@@ -377,117 +481,143 @@ def product_filter_all_api(request):
         # price_list.sort()
 
         fields = [f for f in Product._meta.fields]
-        select_list = []
-        checkbox_list = []
-        for field in fields:
-            # queries.append(Q(**{field.name: SEARCH_TERM}))
-            excluded = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published', 'id',
-                        'title', 'subtype', 'price', 'mods']
-            # json_fields = ['features', 'door_layout', 'shelf_material', 'complete_with_drawers', 'mods', ]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published', 'id',
+                    'title', 'subtype', 'price', 'mods']
 
-            field_name = field.name
+        products_fields_variant_list = get_filters_values(Product, fields, excluded_fields)
 
-            if field_name not in excluded:
-                if isinstance(field, BooleanField):
-                    checkbox_list.append(field.name)
-                else:
-                    excludes = None
-
-                    if isinstance(field, JSONField):
-                        # TODO не доделал
-                        empty_q = Q(**{f'{field_name}__exact': '[]'})
-                        excludes = (excludes and (excludes | empty_q)) or empty_q
-
-                        # TODO на фронте делать мультиселект для таких полей
-                    else:
-                        excludes = None
-
-                        null_q = Q(**{f'{field_name}__isnull': True})
-                        # makes sure excludes is set properly
-                        excludes = (excludes and (excludes | null_q)) or null_q
-                        if isinstance(field, CharField):
-                            empty_q = Q(**{f'{field_name}__exact': ''})
-                            excludes = (excludes and (excludes | empty_q)) or empty_q
-
-                        pre_excluded_values = Product.objects.order_by(field_name).values_list(field_name, flat=True) \
-                            .distinct()
-                        values_minus_excluded = pre_excluded_values.exclude(excludes)
-                        values = list(values_minus_excluded)
-
-                        if field_name == 'features':
-                            print(values)
-
-                        if values:
-                            select = {'product_prop': field.name,
-                                      'name': field.verbose_name,
-                                      'values': values}
-                            select_list.append(select)
-
-        # print(select_list)
+        return JsonResponse(products_fields_variant_list, safe=False)
 
 
-        # qs = Q()
-        # for query in queries:
-        #     qs = qs | query
-        #
-        # Product.objects.filter(qs)
-
-        # width_list = list(set(published_products.exclude(width=None).values_list('width', flat=True)))
-        # width_list.sort()
-        #
-        # height_list = list(set(published_products.exclude(height=None).values_list('height', flat=True)))
-        # height_list.sort()
-        #
-        #
-        # type_list = list(set(published_products.values_list('type', flat=True)))
-        # type_list.sort()
-        # print(type_list)
-        # print(res)
-
-
-        filter_variant_list = {
-            'select': select_list,
-            'checkbox': checkbox_list
-        }
-
-        # print(filter_variant_list)
-
-        return JsonResponse(filter_variant_list, safe=False)
-
-
-def product_filter_api(request):
+def tables_fields_values(request):
     if request.method == 'GET':
-        filter_kwargs = []
+        fields = [f for f in Table._meta.fields]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id', 'title', 'type', 'price', 'mods']
 
-        # qs = Q()
-        # for query in queries:
-        #     qs = qs | query
+        tables_fields_variant_list = get_filters_values(Table, fields, excluded_fields)
 
-        for item in request.GET.items():
-            # TODO продумать как для related полей делать проверку чтоб добавлять title к ним
-            if item[0] == 'type':
-                filter_kwargs.append(Q(**{f'{item[0]}__title': item[1]}))
-            else:
-                filter_kwargs.append(Q(**{item[0]: item[1]}))
+        return JsonResponse(tables_fields_variant_list, safe=False)
 
-        # TODO выводим все (не только опубликованные)
-        # filter_kwargs.append(Q(**{'is_published': True}))
-        # print(filter_kwargs)
 
-        # TODO заменить проверки вот тут
-        if request.GET.get('photo', None) == 'ALL':
-            products = Product.objects.all()
-        else:
-            if filter_kwargs:
-                products = Product.objects.filter(reduce(lambda a, b: a & b, filter_kwargs))
-            else:
-                products = Product.objects.all()
+def chairs_fields_values(request):
+    if request.method == 'GET':
+        fields = [f for f in Chair._meta.fields]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id', 'title', 'type', 'price', 'mods']
+
+        fields_variant_list = get_filters_values(Chair, fields, excluded_fields)
+
+        return JsonResponse(fields_variant_list, safe=False)
+
+
+def drawers_fields_values(request):
+    if request.method == 'GET':
+        fields = [f for f in Drawer._meta.fields]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id', 'title', 'type', 'price', 'mods']
+
+        fields_variant_list = get_filters_values(Drawer, fields, excluded_fields)
+
+        return JsonResponse(fields_variant_list, safe=False)
+
+
+def stands_fields_values(request):
+    if request.method == 'GET':
+        fields = [f for f in Stand._meta.fields]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id', 'title', 'type', 'price', 'mods']
+
+        fields_variant_list = get_filters_values(Stand, fields, excluded_fields)
+
+        return JsonResponse(fields_variant_list, safe=False)
+
+
+def racks_fields_values(request):
+    if request.method == 'GET':
+        fields = [f for f in Rack._meta.fields]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id', 'title', 'type', 'price', 'mods']
+
+        fields_variant_list = get_filters_values(Rack, fields, excluded_fields)
+
+        return JsonResponse(fields_variant_list, safe=False)
+
+
+def accessories_fields_values(request):
+    if request.method == 'GET':
+        fields = [f for f in Accessory._meta.fields]
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id', 'title', 'type', 'price', 'mods']
+
+        fields_variant_list = get_filters_values(Accessory, fields, excluded_fields)
+
+        return JsonResponse(fields_variant_list, safe=False)
+
+
+def products_filtered(request):
+    if request.method == 'GET':
+        products = get_filtered_query_set(Product, request.GET.items())
 
         # print(products)
 
         product_serializer = ProductDetailSerializer(products, many=True)
 
         return JsonResponse(product_serializer.data, safe=False)
+
+
+def tables_filtered(request):
+    if request.method == 'GET':
+        tables = get_filtered_query_set(Table, request.GET.items())
+
+        table_serializer = TableDetailSerializer(tables, many=True)
+
+        return JsonResponse(table_serializer.data, safe=False)
+
+
+def chairs_filtered(request):
+    if request.method == 'GET':
+        query_set = get_filtered_query_set(Chair, request.GET.items())
+
+        serializer = ChairDetailSerializer(query_set, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
+
+def drawers_filtered(request):
+    if request.method == 'GET':
+        query_set = get_filtered_query_set(Drawer, request.GET.items())
+
+        serializer = DrawerDetailSerializer(query_set, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
+
+def stands_filtered(request):
+    if request.method == 'GET':
+        query_set = get_filtered_query_set(Stand, request.GET.items())
+
+        serializer = StandDetailSerializer(query_set, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
+
+def racks_filtered(request):
+    if request.method == 'GET':
+        query_set = get_filtered_query_set(Rack, request.GET.items())
+
+        serializer = RackDetailSerializer(query_set, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
+
+def accessories_filtered(request):
+    if request.method == 'GET':
+        query_set = get_filtered_query_set(Accessory, request.GET.items())
+
+        serializer = AccessoryDetailSerializer(query_set, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
 
 
 @csrf_exempt
