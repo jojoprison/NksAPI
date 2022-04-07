@@ -11,8 +11,10 @@ class WhatsAppNotificator:
         config.read(f'{get_project_root_path()}/config.ini')
         db_config = config['whatsapp']
 
-        self.phone = db_config['phone']
-        self.token = db_config['token']
+        # phone_qdf phone_eug
+        self.phone = db_config['phone_eug']
+        # token_qdf token_eug
+        self.token = db_config['token_eug']
 
     def send_message(self, text):
         payload = {
