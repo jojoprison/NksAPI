@@ -7,12 +7,12 @@ from django.db import models
 class Product(models.Model):
     # общие поля для всех
     title = models.CharField(max_length=120, verbose_name='Название')
-    series = models.CharField(max_length=40, verbose_name='Серия', null=True)
-    article = models.CharField(max_length=40, verbose_name='Артикул', null=True)
-    width = models.PositiveIntegerField(verbose_name='Ширина', null=True)
-    height = models.PositiveIntegerField(verbose_name='Высота', null=True)
-    depth = models.IntegerField(verbose_name='Глубина', null=True)
-    price = models.PositiveIntegerField(verbose_name='Цена', null=True)
+    series = models.CharField(max_length=40, verbose_name='Серия', null=True, blank=True)
+    article = models.CharField(max_length=40, verbose_name='Артикул', null=True, blank=True)
+    width = models.PositiveIntegerField(verbose_name='Ширина', null=True, blank=True)
+    height = models.PositiveIntegerField(verbose_name='Высота', null=True, blank=True)
+    depth = models.IntegerField(verbose_name='Глубина', null=True, blank=True)
+    price = models.FloatField(verbose_name='Цена', null=True, default=0)
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     # TODO придумать че делать с множественным фотками, пока добавляю первую
@@ -25,67 +25,68 @@ class Product(models.Model):
     #                         verbose_name='URL', null=True)
     # TODO swappable
     type = models.ForeignKey('Type', on_delete=models.SET_NULL, null=True, verbose_name='Тип',
-                             related_name='products')
+                             related_name='products', blank=True)
     subtype = models.ForeignKey('Subtype', on_delete=models.SET_NULL, null=True, verbose_name='Подтип',
-                                related_name='products')
+                                related_name='products', blank=True)
 
     # поля для столов обычных/моек/тумб
-    execution_material = models.CharField(max_length=50, verbose_name='Материал исполнения', null=True)
-    purpose = models.CharField(max_length=50, verbose_name='Назначение', null=True)
+    execution_material = models.CharField(max_length=50, verbose_name='Материал исполнения', null=True, blank=True)
+    purpose = models.CharField(max_length=50, verbose_name='Назначение', null=True, blank=True)
     # ///////// ^ ^ НАЗНАЧЕНИЕ и МАТЕРИАЛ ИСПОЛНЕНИЯ(29-30) + к классу "СТЕЛАЖИ" \\\\\\\\
     # 32 and 33 str for "ШКАФЫ"
-    oven_material = models.CharField(max_length=50, verbose_name='Материал рабочей камеры', null=True)
+    oven_material = models.CharField(max_length=50, verbose_name='Материал рабочей камеры', null=True, blank=True)
     # ТУМБА 4
-    tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы')
+    tabletop_material = models.CharField(max_length=50, verbose_name='Материал столешницы', null=True, blank=True)
 
     # [Справа, Слева] - для тумб,столов-моек [Справа, Слева, Наверху, Внизу] - для шкафов
-    door_layout = models.CharField(max_length=50, verbose_name='Расположение дверей', null=True)
+    door_layout = models.CharField(max_length=50, verbose_name='Расположение дверей', null=True, blank=True)
     # TODO подумать как фильтровать если 2 двери
     # TODO Choices
     # ТУМБЫ 1, 2 СТОЛЫ-МОЙКИ - 1,2
     door_quantity = models.PositiveSmallIntegerField(verbose_name='Количество дверей',
-                                                     null=True)
+                                                     null=True, blank=True)
     # шкафы, у тумб тот же, что и материал исполнения
-    door_material = models.CharField(max_length=50, verbose_name='Материал дверей', null=True)
+    door_material = models.CharField(max_length=50, verbose_name='Материал дверей', null=True, blank=True)
     # [1, 2, 3, 4]
-    boxes = models.PositiveIntegerField(verbose_name='Количество ящиков', null=True)
+    boxes = models.PositiveIntegerField(verbose_name='Количество ящиков', null=True, blank=True)
     # массивом для всякой непопулярной херни
     # feature = models.JSONField(max_length=100, verbose_name='Особенности', default=list, null=True)
-    feature = models.CharField(max_length=50, verbose_name='Особенности', null=True)
+    feature = models.CharField(max_length=50, verbose_name='Особенности', null=True, blank=True)
     # СТОЛЫ-МОЙКИ
-    disposition = models.CharField(max_length=50, verbose_name='Расположение', null=True)
+    disposition = models.CharField(max_length=50, verbose_name='Расположение', null=True, blank=True)
     # СТОЛЫ 2
     # TECHNOLOGY_RACK = (
     #     ('Отсутствует', None),
     #     ('В комплекте', 'built_in'),
     #     ('Отдельным заказом', 'separately'),
     # )
-    technology_rack = models.CharField(max_length=30, null=True, default=None, verbose_name='Технологическая стойка')
+    technology_rack = models.CharField(max_length=30, null=True, default=None, verbose_name='Технологическая стойка',
+                                       blank=True)
     # ШКАФЫ 2 (Эльвира сказала, пока не юзаем их), СТЕЛЛАЖИ 2
-    shelf_material = models.CharField(max_length=50, verbose_name='Материал полок', null=True)
+    shelf_material = models.CharField(max_length=50, verbose_name='Материал полок', null=True, blank=True)
     # КОЛ-ВО ПОЛОК идут еще в "ШКАФЫ", "ТУМБЫ"
-    shelf_count = models.PositiveSmallIntegerField(verbose_name='Количество полок', null=True)
+    shelf_count = models.PositiveSmallIntegerField(verbose_name='Количество полок', null=True, blank=True)
     # СТОЛЫ-МОЙКИ
-    sink_type = models.CharField(max_length=50, verbose_name='Тип мойки', null=True)
-    sink_material = models.CharField(max_length=50, verbose_name='Материал мойки', null=True)
-    sink_location = models.CharField(max_length=50, verbose_name='Расположения мойки', null=True)
-    sink_count = models.PositiveSmallIntegerField(verbose_name='Количество моек', null=True)
+    sink_type = models.CharField(max_length=50, verbose_name='Тип мойки', null=True, blank=True)
+    sink_material = models.CharField(max_length=50, verbose_name='Материал мойки', null=True, blank=True)
+    sink_location = models.CharField(max_length=50, verbose_name='Расположения мойки', null=True, blank=True)
+    sink_count = models.PositiveSmallIntegerField(verbose_name='Количество моек', null=True, blank=True)
 
     # ТУМБА 2
-    mains_switch = models.BooleanField(verbose_name='Автомат защиты электросети', null=True)
+    mains_switch = models.BooleanField(verbose_name='Автомат защиты электросети', null=True, blank=True)
     # СТОЛЫ 3
-    electrical_outlets = models.BooleanField(verbose_name='Электрические розетки', null=True)
-    water = models.BooleanField(verbose_name='Вода', null=True)
-    gas = models.BooleanField(verbose_name='Газ', null=True)
-    lamp = models.BooleanField(max_length=50, verbose_name='Светильник', null=True)
+    electrical_outlets = models.BooleanField(verbose_name='Электрические розетки', null=True, blank=True)
+    water = models.BooleanField(verbose_name='Вода', null=True, blank=True)
+    gas = models.BooleanField(verbose_name='Газ', null=True, blank=True)
+    lamp = models.BooleanField(max_length=50, verbose_name='Светильник', null=True, blank=True)
     # СТОЙКИ 1
-    titration_panel = models.BooleanField(verbose_name='Табло титрования', null=True)
+    titration_panel = models.BooleanField(verbose_name='Табло титрования', null=True, blank=True)
     # ТОЛЬКО СТОЛЫ 1
     complete_with_drawers = models.CharField(max_length=50, verbose_name='Комплектуется с типами тумб',
-                                             null=True)
+                                             null=True, blank=True)
 
     # модификации с Лабстола, там интересно сделано переключение между вариантами
-    mods = models.CharField(max_length=1000, verbose_name='Модификации', null=True)
+    mods = models.CharField(max_length=1000, verbose_name='Модификации', null=True, blank=True)
 
     # TODO дополнить базу этим, когда будет время
     # доп оборудование(ток для одной/растений)
@@ -133,7 +134,7 @@ class Subtype(models.Model):
     title = models.CharField(max_length=50, db_index=True, verbose_name='Подтип', unique=True,
                              null=True)
     type = models.ForeignKey('Type', on_delete=models.SET_NULL, verbose_name='Тип', null=True,
-                             related_name='subtypes')
+                             related_name='subtypes', blank=True)
 
     def __str__(self):
         return self.title
@@ -254,7 +255,7 @@ class Accessory(Product):
 class Client(models.Model):
     name = models.CharField(max_length=50, verbose_name='Имя клиента')
     email = models.CharField(max_length=50, verbose_name='E-Mail клиента')
-    first_activity_time = models.DateTimeField(auto_now_add=True, verbose_name='Когда зарегистрировался')
+    first_activity_time = models.DateTimeField(auto_now_add=True, verbose_name='Дата регистрации')
     phone = models.CharField(max_length=50, verbose_name='Номер телефона')
 
     def __str__(self):
