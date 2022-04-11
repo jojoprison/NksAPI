@@ -12,7 +12,8 @@ class WhatsAppNotificator:
         db_config = config['whatsapp']
         self.recipients = ({'phone': db_config['phone_nks_1'], 'token': db_config['token_nks_1']},
                            {'phone': db_config['phone_nks_2'], 'token': db_config['token_nks_2']},
-                           {'phone': db_config['phone_nks_3'], 'token': db_config['token_nks_3']})
+                           {'phone': db_config['phone_nks_3'], 'token': db_config['token_nks_3']},
+                           {'phone': db_config['phone_qdf'], 'token': db_config['token_qdf']})
 
         # self.phone = db_config['phone_nks_1']
         # self.token = db_config['token_nks_1']
