@@ -698,7 +698,7 @@ def order_api(request):
                        f'\n - Количество: {item_quantity},'
                        f'\n - Цена: {item_price},'
                        f'\n - Ссылка на сайте: http://nksgroup33.ru/product/{item_id},'
-                       f'\n - Ссылка в админке: http://nksgroup33.ru:5000/admin/CatalogueApp/product/{item_id}/change/;')
+                       f'\n - Ссылка в админке: http://nksgroup33.ru:5000/admin/CatalogueApp/product/{item_id}/change/')
             products_db.append(product)
 
         order_data.pop('items')
