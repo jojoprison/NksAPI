@@ -14,9 +14,7 @@ class WhatsAppNotificator:
                            {'phone': db_config['phone_nks_2'], 'token': db_config['token_nks_2']},
                            {'phone': db_config['phone_nks_3'], 'token': db_config['token_nks_3']})
 
-        # phone_qdf phone_eug
         # self.phone = db_config['phone_nks_1']
-        # token_qdf token_eug
         # self.token = db_config['token_nks_1']
 
     def send_message(self, text):
@@ -29,8 +27,7 @@ class WhatsAppNotificator:
 
             url = 'https://whin.inutil.info/whin'
 
-            res = requests.post(url, data=payload)
-            print(res.text)
+            requests.post(url, data=payload)
 
 
 if __name__ == '__main__':
