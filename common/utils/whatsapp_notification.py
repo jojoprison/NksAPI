@@ -12,9 +12,9 @@ class WhatsAppNotificator:
         db_config = config['whatsapp']
 
         # phone_qdf phone_eug
-        self.phone = db_config['phone_qdf']
+        self.phone = db_config['phone_nks_1']
         # token_qdf token_eug
-        self.token = db_config['token_qdf']
+        self.token = db_config['phone_nks_1']
 
     def send_message(self, text):
         payload = {
