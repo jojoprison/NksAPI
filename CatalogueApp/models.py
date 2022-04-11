@@ -19,7 +19,7 @@ class Product(models.Model):
     photo_file_name = models.CharField(max_length=150, null=True, blank=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
-    description = models.CharField(max_length=10000, blank=True, verbose_name='Описание', null=True)
+    description = models.TextField(max_length=10000, verbose_name='Описание', null=True, blank=True)
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)

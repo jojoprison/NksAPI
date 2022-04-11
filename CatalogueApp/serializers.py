@@ -14,9 +14,6 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('name', 'phone', 'email', 'city', 'commentary', 'price', 'delivery', 'products')
 
-    def to_representation(self, instance):
-        return model_to_dict(instance)
-
 
 class TypeDetailSerializer(serializers.ModelSerializer):
     # TODO subtype select_related or REL
