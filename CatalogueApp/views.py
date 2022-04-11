@@ -696,15 +696,16 @@ def order_api(request):
             product = (f'{idx + 1}) ID товара: {item_id},'
                        f'\n - Название товара: {title},'
                        f'\n - Количество: {item_quantity},'
-                       f'\n - Цена: {item_price}'
-                       f'\n - Ссылка на сайте: http://nksgroup33.ru/product/{item_id}'
-                       f'\n - Ссылка в админке: http://nksgroup33.ru:5000/admin/CatalogueApp/product/{item_id}/change/')
+                       f'\n - Цена: {item_price},'
+                       f'\n - Ссылка на сайте: http://nksgroup33.ru/product/{item_id},'
+                       f'\n - Ссылка в админке: http://nksgroup33.ru:5000/admin/CatalogueApp/product/{item_id}/change/;')
             products_db.append(product)
 
         order_data.pop('items')
         # print(products_db)
-        products_db_str = json.dumps(products_db)
+        products_db_str = json.dumps(products_db, ensure_ascii=False)
         order_data['products'] = products_db_str
+        # order_data['products'] = products_db
 
         # print(products_db_str)
 
@@ -733,11 +734,11 @@ def order_api(request):
             number_phone = order_data['phone']
             products_formatted = '\n'.join(products_db)
 
-            order_message = (f'Заказ №{saved_order.id}.'
+            order_message = (f'Заказ №{saved_order.id}:'
                              f'\nФИО клиента: {client}.'
-                             f'\nТелефон для связи: {number_phone}.'
-                             f'\nСумма заказа: {total_price} ₽.'
-                             f'\nСпособ доставки: {delivery}.'
+                             f'\nТелефон для связи: {number_phone}'
+                             f'\nСумма заказа: {total_price} ₽'
+                             f'\nСпособ доставки: {delivery}'
                              f'\nТовары:\n{products_formatted}')
 
             WhatsAppNotificator().send_message(order_message)

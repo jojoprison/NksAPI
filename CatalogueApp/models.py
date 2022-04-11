@@ -19,7 +19,7 @@ class Product(models.Model):
     photo_file_name = models.CharField(max_length=150, null=True, blank=True, verbose_name='Фото')
     # TODO досмотреть видос и сделать либо так
     # photo = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name='Фото')
-    description = models.CharField(max_length=2000, blank=True, verbose_name='Описание', null=True)
+    description = models.CharField(max_length=10000, blank=True, verbose_name='Описание', null=True)
     is_published = models.BooleanField(default=True, verbose_name='Опубликовано')
     # slug = models.SlugField(max_length=255, unique=True, db_index=True, allow_unicode=True,
     #                         verbose_name='URL', null=True)
@@ -99,7 +99,7 @@ class Product(models.Model):
         # имеет важное значение для пагинации - в консоли будет алерт об этом
 
     def __str__(self):
-        return self.title
+        return str(self.id) + '. ' + self.title
 
     # 1. такой подход более предпочтительный в случае, когда есть связанные посты по
     # каким-либо индексам
@@ -272,15 +272,15 @@ class Order(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя клиента')
     phone = models.CharField(max_length=50, verbose_name='Номер телефона клиента')
     email = models.CharField(max_length=100, verbose_name='E-mail клиента')
-    city = models.CharField(max_length=50, verbose_name='Город', null=True, blank=True)
+    city = models.CharField(max_length=50, verbose_name='Адрес доставки', null=True, blank=True)
     commentary = models.CharField(max_length=500, verbose_name='Комментарий к заказу', null=True,
                                   blank=True)
     price = models.IntegerField(verbose_name='Сумма заказа')
     delivery = models.CharField(max_length=50, default='Самовывоз', verbose_name='Вариант доставки')
-    products = models.CharField(max_length=10000, verbose_name='Товары')
+    products = models.TextField(max_length=10000, verbose_name='Товары', blank=True, null=True)
 
     def __str__(self):
-        return f'Заказ №{self.id}; тел. {self.phone} {self.name}'
+        return f'Заказ №{self.id}: тел. {self.phone}, Клиент - {self.name}'
 
     class Meta:
         ordering = ['id']
