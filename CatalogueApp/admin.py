@@ -42,5 +42,5 @@ admin.site.register(Client)
 admin.site.unregister(Group)
 
 # меняем названия админ панели
-admin.site.site_title = 'NKS'
-admin.site.site_header = 'NKS_HEADER'
+admin.site.site_title = 'NKS Group'
+admin.site.site_header = 'NKS Group'
