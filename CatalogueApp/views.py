@@ -727,6 +727,7 @@ def order_api(request):
 
         if order_serializer.is_valid():
             saved_order = order_serializer.save()
+            saved_order_id = saved_order.id
 
             delivery = order_data['delivery']
             total_price = order_data['price']
@@ -734,7 +735,7 @@ def order_api(request):
             number_phone = order_data['phone']
             products_formatted = '\n'.join(products_db)
 
-            order_message = (f'Заказ №{saved_order.id}:'
+            order_message = (f'Заказ №{saved_order_id}:'
                              f'\nФИО клиента: {client}.'
                              f'\nТелефон для связи: {number_phone}'
                              f'\nСумма заказа: {total_price} ₽'
@@ -742,7 +743,7 @@ def order_api(request):
                              f'\nТовары:\n{products_formatted}')
 
             WhatsAppNotificator().send_message(order_message)
-            EmailNotificator().send_email(order_message)
+            EmailNotificator().send_email(saved_order_id, order_message)
 
             return JsonResponse('Заказ оформлен', safe=False)
 
