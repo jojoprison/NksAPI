@@ -25,7 +25,8 @@ from CatalogueApp.serializers import (
 
 from django.core.files.storage import default_storage
 
-from common.utils.whatsapp_notifications import WhatsAppNotificator
+from common.utils.email_notification import EmailNotificator
+from common.utils.whatsapp_notification import WhatsAppNotificator
 from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
     StandFilter, RackFilter, AccessoryFilter
 
@@ -679,12 +680,11 @@ def order_api(request):
         items = order_data.get('items')
         products_db = []
 
-        for item in items:
+        for idx, item in enumerate(items):
             item_id = item.get('id')
             title = item.get('title')
             item_quantity = item.get('quantity')
             item_price = item.get('price')
-
 
             # 23:04 пример СМС
             # product = {'ID товара': item_id,
@@ -693,10 +693,12 @@ def order_api(request):
             #            'Цена': item_price}
 
             # 23:23 пример СМС
-            product = (f' ID товара: {item_id},'
-                       f' Название товара: {title},'
-                       f' Количество: {item_quantity},'
-                       f' Цена: {item_price}')
+            product = (f'{idx + 1}) ID товара: {item_id},'
+                       f'\n - Название товара: {title},'
+                       f'\n - Количество: {item_quantity},'
+                       f'\n - Цена: {item_price}'
+                       f'\n - Ссылка на сайте: http://nksgroup33.ru/product/{item_id}'
+                       f'\n - Ссылка в админке: http://nksgroup33.ru:5000/admin/CatalogueApp/product/{item_id}/change/')
             products_db.append(product)
 
         order_data.pop('items')
@@ -729,14 +731,18 @@ def order_api(request):
             total_price = order_data['price']
             client = order_data['name']
             number_phone = order_data['phone']
-            # products = order_data['products']
+            products_formatted = '\n'.join(products_db)
 
-
-            order_message = (f'Заказ №{saved_order.id}.\nФИО клиента: {client}.\nТелефон для связи: {number_phone}.\n'
-                                               f'Сумма заказа: {total_price} ₽.\nСпособ доставки: {delivery}.\n'
-                                               f'Товары: {products_db}')
+            order_message = (f'Заказ №{saved_order.id}.'
+                             f'\nФИО клиента: {client}.'
+                             f'\nТелефон для связи: {number_phone}.'
+                             f'\nСумма заказа: {total_price} ₽.'
+                             f'\nСпособ доставки: {delivery}.'
+                             f'\nТовары:\n{products_formatted}')
 
             WhatsAppNotificator().send_message(order_message)
+            # TODO доделать
+            # EmailNotificator().send_email(order_message)
 
             return JsonResponse('Заказ оформлен', safe=False)
 

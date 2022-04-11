@@ -282,11 +282,11 @@ REST_FRAMEWORK = {
 }
 
 # TODO для почты, настроить
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = '22222226@gmail.com'
-# EMAIL_HOST_PASSWORD = '11111'
-# EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'egyabig2@gmail.com'
+EMAIL_HOST_PASSWORD = '149367139aa149367139Diez'
+EMAIL_PORT = 587
 
 # TODO для ssl
 # CORS_REPLACE_HTTPS_REFERER = False
