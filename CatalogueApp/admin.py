@@ -15,7 +15,11 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Общие', {'fields': ('title', 'type', 'price', 'series', 'article', 'width', 'height', 'depth', 'time_update',
                               'time_create', 'photo_file_name', 'is_published', 'description')}),
-        ('Частные', {'fields': ('subtype', 'execution_material', 'purpose', 'oven_material')}),
+        ('Частные', {'fields': ('subtype', 'execution_material', 'purpose', 'oven_material', 'tabletop_material',
+                                'door_layout', 'door_quantity', 'door_material', 'boxes', 'feature',
+                                'disposition', 'technology_rack', 'shelf_material', 'shelf_count', 'sink_type',
+                                'sink_material', 'sink_location', 'sink_count', 'mains_switch', 'electrical_outlets',
+                                'water', 'gas', 'lamp', 'titration_panel', 'complete_with_drawers', 'mods')}),
     )
 
     # эти же поля для отображения должны присутствовать в списке fields
