@@ -12,7 +12,7 @@ class Product(models.Model):
     width = models.PositiveIntegerField(verbose_name='Ширина', null=True, blank=True)
     height = models.PositiveIntegerField(verbose_name='Высота', null=True, blank=True)
     depth = models.IntegerField(verbose_name='Глубина', null=True, blank=True)
-    price = models.FloatField(verbose_name='Цена', null=True, default=0)
+    price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='Цена', null=True, default=0)
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время изменения')
     # TODO придумать че делать с множественным фотками, пока добавляю первую
