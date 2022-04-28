@@ -31,6 +31,7 @@ urlpatterns = [
     path('accessories/filtersAll', views.accessories_fields_values),
     path('accessories/filter', views.accessories_filtered),
 
+
     # url(r'^client$', views.client_api),
     #
     # url(r'^order$', views.order_api),

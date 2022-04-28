@@ -1,22 +1,23 @@
 import json
-import operator
 from functools import reduce
 
-from django.contrib.gis.measure import D
 from django.db.models import Q, BooleanField, F, CharField, JSONField
-from django.shortcuts import render
+
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework import viewsets, permissions
+
+from rest_framework.authentication import BasicAuthentication
+
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from CatalogueApp.models import Product, Type, Client, Table, Chair, Drawer, Stand, Rack, Accessory, Order
+from CatalogueApp.models import Product, Type, Table, Chair, Drawer, Stand, Rack, Accessory, Order
 from CatalogueApp.serializers import (
     TypeDetailSerializer,
-    SubtypeDetailSerializer,
     OrderSerializer,
     ClientSerializer, ProductListSerializer, ProductDetailSerializer, TableListSerializer, TableDetailSerializer,
     ChairListSerializer, ChairDetailSerializer, DrawerListSerializer, DrawerDetailSerializer, StandDetailSerializer,
@@ -25,17 +26,46 @@ from CatalogueApp.serializers import (
 
 from django.core.files.storage import default_storage
 
-from common.utils.email_notification import EmailNotificator
 from common.utils.whatsapp_notification import WhatsAppNotificator
-from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
+from .service import ProductFilter, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
     StandFilter, RackFilter, AccessoryFilter
 
 
 # ModelViewSet
+# class RobotDetail(generics.RetrieveUpdateDestroyAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = Robot.objects.all()
+#     serializer_class = RobotSerializer
+#     name = 'robot-detail'
+#
+#
+# class RobotList(generics.ListCreateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = Robot.objects.all()
+#     serializer_class = RobotSerializer
+#     name = 'robot-list'
+
+class ClassBasedView(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+
+            # `django.contrib.auth.User` instance
+            'user': str(request.user),
+
+            # None
+            'auth': str(request.auth),
+        }
+        return Response(content)
+
+
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         # radius = self.request.query_params.get('radius')
@@ -756,3 +786,4 @@ def save_file(request):
     file_name = default_storage.save('products/' + file.name, file)
 
     return JsonResponse(file_name, safe=False)
+
