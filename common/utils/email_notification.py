@@ -1,28 +1,18 @@
-import configparser
-
 from django.core.mail import send_mail
 
-from common.utils.paths import get_project_root_path
+from NksAPI import settings
 
 
 class EmailNotificator:
-    def __init__(self):
-        config = configparser.ConfigParser()
-        config.read(f'{get_project_root_path()}/config.ini')
-        db_config = config['email']
-
-        self.email_from = db_config['email_from']
-        self.email_to = db_config['email_to']
-
-    def send_email(self, text):
+    def send_email(self, order_id, text):
         send_mail(
-            'Заказ test',
-            text,
-            self.email_from,
-            [self.email_to],
+            subject=f'Заказ №{order_id}',
+            message=text,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=settings.RECIPIENT_ADDRESS.split(','),
             fail_silently=False,
         )
 
 
 if __name__ == '__main__':
-    EmailNotificator().send_email('Тестовое сообщение')
+    EmailNotificator().send_email(1, 'Тестовое сообщение')

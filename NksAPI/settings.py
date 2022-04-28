@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import os
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 
 from rest_framework.permissions import IsAuthenticated
@@ -292,7 +296,6 @@ REST_FRAMEWORK = {
     # 'PAGE_SIZE': 3
 }
 
-
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
@@ -331,6 +334,7 @@ EMAIL_HOST_USER = 'egyabig2@gmail.com'
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 
+# 3f1926974372beac221e64848b01a1773add6300
 # TODO для ssl
 # CORS_REPLACE_HTTPS_REFERER = False
 # HOST_SCHEME = "https://"
@@ -349,3 +353,12 @@ EMAIL_PORT = 587
 # SECURE_SSL_REDIRECT = True
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
+
+# почта
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+RECIPIENT_ADDRESS = env('RECIPIENT_ADDRESS')
