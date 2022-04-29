@@ -1,5 +1,11 @@
 from django.conf.urls import url
-from django.urls import path
+from django.urls import path, include
+from django.contrib import admin
+from rest_framework.authtoken.views import obtain_auth_token
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from CatalogueApp import views
 
@@ -7,7 +13,20 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from CatalogueApp.views import ProductViewSet, TableViewSet, ChairViewSet, DrawerViewSet, StandViewSet, RackViewSet, \
-    AccessoryViewSet
+    AccessoryViewSet, UserRegisterAPIViews
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="CodifyHR API",
+      default_version='v1',
+      description="special for frontend ^^",
+      contact=openapi.Contact(email="maxlestor2@gmail.com"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
 
 urlpatterns = [
     # url(r'^products$', views.product_api),
@@ -61,6 +80,8 @@ urlpatterns = [
     # path('subtypes/', ProductViewSet.as_view({'get': 'list'})),
     # path('subtypes/<int:pk>/', ProductViewSet.as_view({'get': 'retrieve'})),
     path('order/', views.order_api),
+
+
 
     # пока не нужен, мб в будущем когда ЛК будет
     # path('client/', ProductViewSet.as_view({'get': 'list'})),

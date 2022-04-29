@@ -18,11 +18,21 @@ from django.conf.urls import include
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from CatalogueApp.urls import schema_view
+from CatalogueApp.views import UserRegisterAPIViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_obtain_pair'),
+    path('admin/', admin.site.urls),
+    path('auth/', include("rest_framework.urls")),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    # path('', include('resumes_app.urls')),
     path('', include('CatalogueApp.urls')),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-    # path('auth/', include('djoser.urls.jwt'))
+    path('', include('auth_app.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
