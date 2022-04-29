@@ -38,7 +38,30 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # CORS_ALLOWED_ORIGINS = [
 #     'http://185.219.43.45',
@@ -49,23 +72,17 @@ CORS_ORIGIN_ALLOW_ALL = True
 #     'http://nksgroup33.ru:8000'
 # ]
 
+# CORS_ORIGIN_WHITELIST = ['*']
 CORS_ORIGIN_WHITELIST = [
     'https://185.219.43.45',
     "http://127.0.0.1",
     'https://nksgroup33.ru',
     # 'https://185.219.43.45:5000',
     # 'https://nksgroup33.ru:5000',
+    # "http://localhost:8080",
 ]
 
-# CORS_ORIGIN_WHITELIST = [
-#     "http://localhost:8080",
-#     "http://127.0.0.1:8000"
-# ]
-
-# CORS_ALLOW_ALL_ORIGINS = True
-
 # Application definition
-
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
