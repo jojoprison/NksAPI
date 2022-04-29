@@ -773,7 +773,7 @@ def order_api(request):
                              f'\nТовары:\n{products_formatted}')
 
             WhatsAppNotificator().send_message(order_message)
-            EmailNotificator().send_email(saved_order_id, order_message)
+            # EmailNotificator().send_email(saved_order_id, order_message)
 
             return JsonResponse('Заказ оформлен', safe=False)
 
