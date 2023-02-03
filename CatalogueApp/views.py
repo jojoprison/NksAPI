@@ -1,41 +1,96 @@
 import json
-import operator
 from functools import reduce
 
-from django.contrib.gis.measure import D
 from django.db.models import Q, BooleanField, F, CharField, JSONField
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.authtoken.admin import User
+from rest_framework import viewsets, permissions, views, response, status
+
+from rest_framework.authentication import BasicAuthentication
+
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from CatalogueApp.models import Product, Type, Client, Table, Chair, Drawer, Stand, Rack, Accessory, Order
+from CatalogueApp.models import Product, Type, Table, Chair, Drawer, Stand, Rack, Accessory, Order
 from CatalogueApp.serializers import (
+    UserSerializer,
     TypeDetailSerializer,
-    SubtypeDetailSerializer,
     OrderSerializer,
     ClientSerializer, ProductListSerializer, ProductDetailSerializer, TableListSerializer, TableDetailSerializer,
     ChairListSerializer, ChairDetailSerializer, DrawerListSerializer, DrawerDetailSerializer, StandDetailSerializer,
-    StandListSerializer, RackListSerializer, RackDetailSerializer, AccessoryListSerializer, AccessoryDetailSerializer
+    StandListSerializer, RackListSerializer, RackDetailSerializer, AccessoryListSerializer, AccessoryDetailSerializer,
+    UserDetailSerializer
 )
 
 from django.core.files.storage import default_storage
 
-from common.utils.email_notification import EmailNotificator
 from common.utils.whatsapp_notification import WhatsAppNotificator
-from .service import ProductFilter, get_client_ip, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
+from .service import ProductFilter, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
     StandFilter, RackFilter, AccessoryFilter
 
 
 # ModelViewSet
+# class RobotDetail(generics.RetrieveUpdateDestroyAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = Robot.objects.all()
+#     serializer_class = RobotSerializer
+#     name = 'robot-detail'
+#
+#
+# class RobotList(generics.ListCreateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = Robot.objects.all()
+#     serializer_class = RobotSerializer
+#     name = 'robot-list'
+
+class ClassBasedView(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+
+            # `django.contrib.auth.User` instance
+            'user': str(request.user),
+
+            # None
+            'auth': str(request.auth),
+        }
+        return Response(content)
+
+
+class UserRegisterAPIViews(views.APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PersonalRoomViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, pk=None):
+        queryset = User.objects.filter(id=self.request.user.id)
+        user = get_object_or_404(queryset, id=self.request.user.id)
+        serializer = UserDetailSerializer(user)
+        return Response(serializer.data)
+
+
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         # radius = self.request.query_params.get('radius')
@@ -77,6 +132,8 @@ class TableViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TableFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -122,6 +179,8 @@ class ChairViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ChairFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -161,6 +220,8 @@ class DrawerViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DrawerFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -200,6 +261,8 @@ class StandViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = StandFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -239,6 +302,8 @@ class RackViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RackFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -278,6 +343,8 @@ class AccessoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AccessoryFilter
     pagination_class = ProductsPagination
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -727,6 +794,7 @@ def order_api(request):
 
         if order_serializer.is_valid():
             saved_order = order_serializer.save()
+            saved_order_id = saved_order.id
 
             delivery = order_data['delivery']
             total_price = order_data['price']
@@ -734,7 +802,7 @@ def order_api(request):
             number_phone = order_data['phone']
             products_formatted = '\n'.join(products_db)
 
-            order_message = (f'Заказ №{saved_order.id}:'
+            order_message = (f'Заказ №{saved_order_id}:'
                              f'\nФИО клиента: {client}.'
                              f'\nТелефон для связи: {number_phone}'
                              f'\nСумма заказа: {total_price} ₽'
@@ -742,8 +810,7 @@ def order_api(request):
                              f'\nТовары:\n{products_formatted}')
 
             WhatsAppNotificator().send_message(order_message)
-            # TODO доделать
-            # EmailNotificator().send_email(order_message)
+            # EmailNotificator().send_email(saved_order_id, order_message)
 
             return JsonResponse('Заказ оформлен', safe=False)
 
@@ -756,3 +823,4 @@ def save_file(request):
     file_name = default_storage.save('products/' + file.name, file)
 
     return JsonResponse(file_name, safe=False)
+
