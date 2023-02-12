@@ -29,7 +29,6 @@ urlpatterns = [
 
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_obtain_pair'),
-    path('admin/', admin.site.urls),
     path('auth/', include("rest_framework.urls")),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # path('', include('resumes_app.urls')),
