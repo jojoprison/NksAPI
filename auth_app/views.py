@@ -18,7 +18,7 @@ class UserRegisterAPIViews(views.APIView):
 
 
 class PersonalRoomViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, pk=None):
         queryset = User.objects.filter(id=self.request.user.id)

@@ -51,7 +51,7 @@ from .service import ProductFilter, ProductsPagination, TableFilter, ChairFilter
 
 class ClassBasedView(APIView):
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         content = {
@@ -77,7 +77,7 @@ class UserRegisterAPIViews(views.APIView):
 
 
 class PersonalRoomViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, pk=None):
         queryset = User.objects.filter(id=self.request.user.id)
@@ -90,7 +90,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         # radius = self.request.query_params.get('radius')
@@ -132,7 +132,7 @@ class TableViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TableFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
     def get_queryset(self):
@@ -179,7 +179,7 @@ class ChairViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ChairFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
     def get_queryset(self):
@@ -220,7 +220,7 @@ class DrawerViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DrawerFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
     def get_queryset(self):
@@ -261,7 +261,7 @@ class StandViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = StandFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
     def get_queryset(self):
@@ -302,7 +302,7 @@ class RackViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RackFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
     def get_queryset(self):
@@ -343,7 +343,7 @@ class AccessoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AccessoryFilter
     pagination_class = ProductsPagination
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
 
     def get_queryset(self):
@@ -462,6 +462,10 @@ def get_filters_values(model_class, fields, excluded_fields):
                     if isinstance(field, CharField):
                         empty_q = Q(**{f'{field_name}__exact': ''})
                         excludes = (excludes and (excludes | empty_q)) or empty_q
+
+                    if field_name == 'type':
+                        pre_excluded_values = model_class.objects.order_by(field_name)\
+                            .values_list(field_name, flat=True).distinct()
 
                     pre_excluded_values = model_class.objects.order_by(field_name).values_list(field_name, flat=True) \
                         .distinct()
