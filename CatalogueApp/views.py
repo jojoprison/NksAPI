@@ -1,56 +1,45 @@
 import json
 from functools import reduce
 
-from django.db.models import Q, BooleanField, F, CharField, JSONField
-from django.shortcuts import get_object_or_404
-
+from django.core.files.storage import default_storage
+from django.db.models import Q, BooleanField, CharField, JSONField
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.authtoken.admin import User
-from rest_framework import viewsets, permissions, views, response, status
-
-from rest_framework.authentication import BasicAuthentication
-
-from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import viewsets, permissions
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from CatalogueApp.models import Product, Type, Table, Chair, Drawer, Stand, Rack, Accessory, Order
+from CatalogueApp.models import (
+    Product, Type, Table,
+    Chair, Drawer, Stand,
+    Rack, Accessory
+)
 from CatalogueApp.serializers import (
-    UserSerializer,
-    TypeDetailSerializer,
-    OrderSerializer,
-    ClientSerializer, ProductListSerializer, ProductDetailSerializer, TableListSerializer, TableDetailSerializer,
-    ChairListSerializer, ChairDetailSerializer, DrawerListSerializer, DrawerDetailSerializer, StandDetailSerializer,
-    StandListSerializer, RackListSerializer, RackDetailSerializer, AccessoryListSerializer, AccessoryDetailSerializer,
-    UserDetailSerializer
+    TypeDetailSerializer, OrderSerializer,
+    ClientSerializer, ProductListSerializer,
+    ProductDetailSerializer, TableListSerializer,
+    TableDetailSerializer, ChairListSerializer,
+    ChairDetailSerializer, DrawerListSerializer,
+    DrawerDetailSerializer, StandDetailSerializer,
+    StandListSerializer, RackListSerializer,
+    RackDetailSerializer, AccessoryListSerializer,
+    AccessoryDetailSerializer
+)
+from common.utils.whatsapp_notification import WhatsAppNotificator
+from .service import (
+    ProductFilter, ProductsPagination,
+    TableFilter, ChairFilter,
+    DrawerFilter, StandFilter,
+    RackFilter, AccessoryFilter
 )
 
-from django.core.files.storage import default_storage
-
-from common.utils.whatsapp_notification import WhatsAppNotificator
-from .service import ProductFilter, ProductsPagination, TableFilter, ChairFilter, DrawerFilter, \
-    StandFilter, RackFilter, AccessoryFilter
-
-
-# ModelViewSet
-# class RobotDetail(generics.RetrieveUpdateDestroyAPIView):
-#     permission_classes = [IsAuthenticated]
-#     queryset = Robot.objects.all()
-#     serializer_class = RobotSerializer
-#     name = 'robot-detail'
-#
-#
-# class RobotList(generics.ListCreateAPIView):
-#     permission_classes = [IsAuthenticated]
-#     queryset = Robot.objects.all()
-#     serializer_class = RobotSerializer
-#     name = 'robot-list'
 
 class ClassBasedView(APIView):
     authentication_classes = [BasicAuthentication]
+
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -65,31 +54,11 @@ class ClassBasedView(APIView):
         return Response(content)
 
 
-class UserRegisterAPIViews(views.APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PersonalRoomViewSet(viewsets.ViewSet):
-    # permission_classes = [IsAuthenticated]
-
-    def retrieve(self, request, pk=None):
-        queryset = User.objects.filter(id=self.request.user.id)
-        user = get_object_or_404(queryset, id=self.request.user.id)
-        serializer = UserDetailSerializer(user)
-        return Response(serializer.data)
-
-
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
     pagination_class = ProductsPagination
+
     # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -132,8 +101,8 @@ class TableViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TableFilter
     pagination_class = ProductsPagination
-    # permission_classes = [permissions.IsAuthenticated]
 
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -179,8 +148,8 @@ class ChairViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ChairFilter
     pagination_class = ProductsPagination
-    # permission_classes = [permissions.IsAuthenticated]
 
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -220,8 +189,8 @@ class DrawerViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DrawerFilter
     pagination_class = ProductsPagination
-    # permission_classes = [permissions.IsAuthenticated]
 
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -261,8 +230,8 @@ class StandViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = StandFilter
     pagination_class = ProductsPagination
-    # permission_classes = [permissions.IsAuthenticated]
 
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -302,8 +271,8 @@ class RackViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RackFilter
     pagination_class = ProductsPagination
-    # permission_classes = [permissions.IsAuthenticated]
 
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -343,8 +312,8 @@ class AccessoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = AccessoryFilter
     pagination_class = ProductsPagination
-    # permission_classes = [permissions.IsAuthenticated]
 
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -464,7 +433,7 @@ def get_filters_values(model_class, fields, excluded_fields):
                         excludes = (excludes and (excludes | empty_q)) or empty_q
 
                     if field_name == 'type':
-                        pre_excluded_values = model_class.objects.order_by(field_name)\
+                        pre_excluded_values = model_class.objects.order_by(field_name) \
                             .values_list(field_name, flat=True).distinct()
 
                     pre_excluded_values = model_class.objects.order_by(field_name).values_list(field_name, flat=True) \
@@ -553,8 +522,9 @@ def products_fields_values(request):
         # price_list.sort()
 
         fields = [f for f in Product._meta.fields]
-        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published', 'id',
-                    'title', 'subtype', 'price', 'mods']
+        excluded_fields = ['description', 'time_create', 'time_update', 'photo_file_name', 'article', 'is_published',
+                           'id',
+                           'title', 'subtype', 'price', 'mods']
 
         products_fields_variant_list = get_filters_values(Product, fields, excluded_fields)
 
@@ -792,9 +762,7 @@ def order_api(request):
         # order_data['client'] = client.id
         # order_name = order_data['name']
 
-
         order_serializer = OrderSerializer(data=order_data)
-
 
         if order_serializer.is_valid():
             saved_order = order_serializer.save()
@@ -827,4 +795,3 @@ def save_file(request):
     file_name = default_storage.save('products/' + file.name, file)
 
     return JsonResponse(file_name, safe=False)
-

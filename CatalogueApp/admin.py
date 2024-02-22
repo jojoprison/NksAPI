@@ -39,7 +39,7 @@ admin.site.register(Type)
 admin.site.register(Subtype)
 admin.site.register(Order)
 admin.site.register(Client)
-admin.site.unregister(Group)
+# admin.site.unregister(Group)
 
 # меняем названия админ панели
 admin.site.site_title = 'NKS Group'

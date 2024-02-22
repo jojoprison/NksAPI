@@ -13,7 +13,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from CatalogueApp.views import ProductViewSet, TableViewSet, ChairViewSet, DrawerViewSet, StandViewSet, RackViewSet, \
-    AccessoryViewSet, UserRegisterAPIViews
+    AccessoryViewSet
 
 
 schema_view = get_schema_view(
