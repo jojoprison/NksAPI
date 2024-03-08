@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from CatalogueApp.models import Product, Type, Client, Order, Subtype, Table, Chair, Drawer, Stand, Rack, Accessory
-from django.contrib.auth.models import User
+from CatalogueApp.models import (
+    Product, Type, Client,
+    Order, Subtype, Table,
+    Chair, Drawer, Stand,
+    Rack, Accessory
+)
 from rest_framework import serializers, validators
-from rest_framework.authtoken.models import Token
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
